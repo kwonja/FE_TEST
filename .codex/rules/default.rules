@@ -1,0 +1,66 @@
+# 프로젝트 반복 검증 명령은 승인 없이 실행할 수 있다.
+prefix_rule(
+    pattern = ["npm.cmd", "run", "test:run"],
+    decision = "allow",
+    justification = "Vitest/RTL 검증은 이 프로젝트의 표준 반복 검증 명령이다.",
+    match = [
+        "npm.cmd run test:run",
+    ],
+)
+
+prefix_rule(
+    pattern = ["npm.cmd", "run", "lint"],
+    decision = "allow",
+    justification = "ESLint 검증은 반복 실행해도 안전한 프로젝트 검증 명령이다.",
+    match = [
+        "npm.cmd run lint",
+    ],
+)
+
+prefix_rule(
+    pattern = ["npm.cmd", "run", "build"],
+    decision = "allow",
+    justification = "Next.js 빌드는 프로젝트 검증에 필요한 명령이다.",
+    match = [
+        "npm.cmd run build",
+    ],
+)
+
+# 의존성 설치와 브라우저 기반 E2E는 환경 변경이나 브라우저 실행을 포함할 수 있으므로 확인한다.
+prefix_rule(
+    pattern = ["npm.cmd", "install"],
+    decision = "prompt",
+    justification = "의존성 설치는 package 파일과 node_modules를 변경하므로 사용자 확인이 필요하다.",
+    match = [
+        "npm.cmd install",
+        "npm.cmd install -D vitest",
+    ],
+)
+
+prefix_rule(
+    pattern = ["npm.cmd", "run", "test:e2e"],
+    decision = "prompt",
+    justification = "Playwright E2E는 dev server와 브라우저 실행을 포함할 수 있으므로 사용자 확인이 필요하다.",
+    match = [
+        "npm.cmd run test:e2e",
+    ],
+)
+
+prefix_rule(
+    pattern = ["npx.cmd", "playwright", "install"],
+    decision = "prompt",
+    justification = "Playwright 브라우저 설치는 외부 다운로드와 사용자 캐시 변경을 포함한다.",
+    match = [
+        "npx.cmd playwright install chromium",
+    ],
+)
+
+# 파괴적인 Git 명령은 차단한다.
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+    justification = "작업 내용을 삭제할 수 있다. 필요하면 사용자에게 명시적으로 확인한 뒤 안전한 대안을 사용한다.",
+    match = [
+        "git reset --hard",
+    ],
+)
