@@ -22,6 +22,19 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 이 프로젝트의 Next.js 버전은 기존 지식과 다를 수 있다.
 - Next.js 관련 코드를 수정하기 전에는 `node_modules/next/dist/docs/`의 관련 문서를 먼저 확인한다.
 
+## Git Flow
+
+- 이 프로젝트는 Git flow 방식으로 관리한다.
+- `master`는 배포 가능한 안정 버전으로 유지한다.
+- 개발 작업은 `develop` 브랜치를 기준으로 진행한다.
+- 기능 작업은 `feature/<name>` 브랜치에서 진행한다.
+- 버그 수정은 `fix/<name>` 브랜치에서 진행한다.
+- 릴리스 준비는 `release/<version>` 브랜치에서 진행한다.
+- 긴급 수정은 `hotfix/<name>` 브랜치에서 진행한다.
+- 직접 `master`에 커밋하지 않는다.
+- 작업 전 현재 브랜치를 확인하고, 필요한 경우 적절한 브랜치를 생성하거나 전환한다.
+- 커밋 전 `npm run test:run`을 실행한다.
+
 ## 검증
 
 - 변경사항을 검증할 때는 반드시 관련 테스트를 실행한다.
