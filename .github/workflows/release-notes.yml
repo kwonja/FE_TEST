@@ -23,6 +23,7 @@ jobs:
           MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
+          REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
 
@@ -40,6 +41,7 @@ jobs:
 "
 
           gh release create "$TAG" \
+            --repo "$REPOSITORY" \
             --target "$MERGE_SHA" \
             --title "$TITLE" \
             --notes "$NOTES" \
