@@ -34,6 +34,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 직접 `master`에 커밋하지 않는다.
 - 작업 전 현재 브랜치를 확인하고, 필요한 경우 적절한 브랜치를 생성하거나 전환한다.
 - 커밋 전 `npm run test:run`을 실행한다.
+- 변경사항 검증을 통과하고 feature/fix/release/hotfix 브랜치에 push했다면 PR을 생성한다.
+- PR 생성 도구(`gh`, 브라우저, MCP 등)가 없거나 인증이 부족하면 PR 생성 링크와 제목/본문 초안을 제공한다.
 
 ## 검증
 
