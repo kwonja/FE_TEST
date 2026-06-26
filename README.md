@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Deployments
+
+- prod: [kwonja-fe-test.vercel.app](https://kwonja-fe-test.vercel.app/)
+- dev: [dev-kwonja-fe-test.vercel.app](https://dev-kwonja-fe-test.vercel.app/)
+
 ## Getting Started
 
 First, run the development server:
