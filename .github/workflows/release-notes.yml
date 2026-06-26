@@ -21,6 +21,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           REPOSITORY: ${{ github.repository }}
@@ -32,9 +33,32 @@ jobs:
             exit 1
           fi
 
-          DATE="$(date -u +'%Y.%m.%d')"
-          TAG="v${DATE}.${GITHUB_RUN_NUMBER}"
-          TITLE="Release ${TAG}"
+          case "$HEAD_BRANCH" in
+            release/v*)
+              VERSION="${HEAD_BRANCH#release/}"
+              KIND="Release"
+              ;;
+            release/*)
+              VERSION="v${HEAD_BRANCH#release/}"
+              KIND="Release"
+              ;;
+            hotfix/v*)
+              VERSION="${HEAD_BRANCH#hotfix/}"
+              KIND="Hotfix"
+              ;;
+            hotfix/*)
+              VERSION="v${HEAD_BRANCH#hotfix/}"
+              KIND="Hotfix"
+              ;;
+            *)
+              DATE="$(date -u +'%Y.%m.%d')"
+              VERSION="v${DATE}.${GITHUB_RUN_NUMBER}"
+              KIND="Release"
+              ;;
+          esac
+
+          TAG="$VERSION"
+          TITLE="${KIND} ${VERSION}"
           NOTES="$(printf '## Included PR\n\n- #%s %s\n' "$PR_NUMBER" "$PR_TITLE")"
 
           gh release create "$TAG" \
