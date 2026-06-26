@@ -35,10 +35,7 @@ jobs:
           DATE="$(date -u +'%Y.%m.%d')"
           TAG="v${DATE}.${GITHUB_RUN_NUMBER}"
           TITLE="Release ${TAG}"
-          NOTES="## Included PR
-
-- #${PR_NUMBER} ${PR_TITLE}
-"
+          NOTES="$(printf '## Included PR\n\n- #%s %s\n' "$PR_NUMBER" "$PR_TITLE")"
 
           gh release create "$TAG" \
             --repo "$REPOSITORY" \
