@@ -1,0 +1,48 @@
+name: Release notes
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  create-release-notes:
+    name: Create GitHub release notes
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create release with generated notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$MERGE_SHA" ]; then
+            echo "Missing merge commit SHA."
+            exit 1
+          fi
+
+          DATE="$(date -u +'%Y.%m.%d')"
+          TAG="v${DATE}.${GITHUB_RUN_NUMBER}"
+          TITLE="Release ${TAG}"
+          NOTES="## Included PR
+
+- #${PR_NUMBER} ${PR_TITLE}
+"
+
+          gh release create "$TAG" \
+            --target "$MERGE_SHA" \
+            --title "$TITLE" \
+            --notes "$NOTES" \
+            --generate-notes \
+            --fail-on-no-commits \
+            --latest
