@@ -1,13 +1,5 @@
-import { Calculator } from "./calculator";
-import { PracticeInputs } from "./practice-inputs";
-import { TodoList } from "./todo-list";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <>
-      <Calculator />
-      <PracticeInputs />
-      <TodoList />
-    </>
-  );
+  redirect("/calendar");
 }

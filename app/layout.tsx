@@ -3,11 +3,14 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 
 export const metadata: Metadata = {
-  title: "Calculator Test Lab",
-  description: "A small calculator app for testing Vitest, RTL, and Playwright.",
+  title: {
+    default: "Dayline",
+    template: "%s | Dayline",
+  },
+  description: "캘린더와 테이블로 일정을 관리하는 Next.js 사이드 프로젝트",
 };
 
 export default function RootLayout({
@@ -17,10 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ko"
       className={cn("h-full antialiased", "font-sans", geist.variable)}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }
