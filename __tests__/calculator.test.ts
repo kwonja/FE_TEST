@@ -3,7 +3,7 @@ import {
   add,
   calculate,
   formatResult,
-} from "@/features/calculator/model/calculator";
+} from "@/features/calculator/utils/calculate";
 
 describe("calculate", () => {
   it("adds two numbers", () => {

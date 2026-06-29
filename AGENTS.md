@@ -30,6 +30,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 서로 다른 feature끼리는 직접 import하지 않는다.
 - `shared`에는 여러 기능에서 재사용할 수 있는 UI와 유틸리티만 둔다.
 - 도메인 타입, 상태, 검증, 비즈니스 규칙은 `shared`에 두지 않는다.
+- feature 내부의 스키마, 타입, 상수는 `model`에 둔다.
+- 입력값을 계산하거나 변환하는 순수 함수는 feature 내부의 `utils`에 둔다.
 - 두 화면이 같은 도메인 모델을 공유한다면 별도 feature로 나누기보다 하나의 feature 내부 모듈로 구성한다.
 - 레이어 및 feature 간 import 제한은 ESLint 규칙을 따른다.
 
