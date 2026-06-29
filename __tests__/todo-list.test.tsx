@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { TodoList } from "@/app/todo-list";
+import { TodoList } from "@/features/todo/components/todo-list";
 
 describe("TodoList", () => {
   it("adds a new todo item", async () => {

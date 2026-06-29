@@ -1,4 +1,4 @@
-import { ScheduleSidebar } from "@/components/schedule/schedule-sidebar";
+import { ScheduleSidebar } from "@/features/schedule/components/schedule-sidebar";
 
 export default function ScheduleLayout({
   children,

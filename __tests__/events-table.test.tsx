@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { EventsTable } from "@/components/schedule/events-table";
-import type { CalendarEvent } from "@/lib/events";
+import { EventsTable } from "@/features/schedule/components/events-table";
+import type { CalendarEvent } from "@/features/schedule/model/events";
 
 const events: CalendarEvent[] = [
   {

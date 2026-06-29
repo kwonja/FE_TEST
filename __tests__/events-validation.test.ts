@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { eventInputSchema } from "@/lib/events-validation";
+import { eventInputSchema } from "@/features/schedule/model/events-validation";
 
 const validEvent = {
   title: "주간 회의",
