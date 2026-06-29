@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { calculate, formatResult, type Operator } from "@/lib/calculator";
+import type { Operator } from "../model/types";
+import { calculate, formatResult } from "../utils/calculate";
 
 const operators: Array<{ label: string; value: Operator }> = [
   { label: "+", value: "add" },

@@ -22,6 +22,19 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 이 프로젝트의 Next.js 버전은 기존 지식과 다를 수 있다.
 - Next.js 관련 코드를 수정하기 전에는 `node_modules/next/dist/docs/`의 관련 문서를 먼저 확인한다.
 
+## Feature-based layered 구조
+
+- 소스 코드의 의존성 방향은 `shared` → `features` → `app` 순서를 따른다.
+- `app`은 라우팅, 레이아웃, Route Handler 같은 애플리케이션 진입점만 담당한다.
+- 기능과 도메인 코드는 `features/<feature-name>` 안에 둔다.
+- 서로 다른 feature끼리는 직접 import하지 않는다.
+- `shared`에는 여러 기능에서 재사용할 수 있는 UI와 유틸리티만 둔다.
+- 도메인 타입, 상태, 검증, 비즈니스 규칙은 `shared`에 두지 않는다.
+- feature 내부의 스키마, 타입, 상수는 `model`에 둔다.
+- 입력값을 계산하거나 변환하는 순수 함수는 feature 내부의 `utils`에 둔다.
+- 두 화면이 같은 도메인 모델을 공유한다면 별도 feature로 나누기보다 하나의 feature 내부 모듈로 구성한다.
+- 레이어 및 feature 간 import 제한은 ESLint 규칙을 따른다.
+
 ## Git Flow
 
 - 이 프로젝트는 Git flow 방식으로 관리한다.
