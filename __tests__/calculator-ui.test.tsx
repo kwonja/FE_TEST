@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { Calculator } from "@/app/calculator";
+import { Calculator } from "@/features/calculator/components/calculator";
 
 describe("Calculator", () => {
   it("calculates with user input", async () => {

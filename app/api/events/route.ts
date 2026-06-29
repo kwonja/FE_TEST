@@ -1,8 +1,8 @@
 import { asc } from "drizzle-orm";
 
-import { db } from "@/lib/db";
-import { events } from "@/lib/db/schema";
-import { eventInputSchema } from "@/lib/events-validation";
+import { eventInputSchema } from "@/features/schedule/model/events-validation";
+import { db } from "@/features/schedule/server/db";
+import { events } from "@/features/schedule/server/schema";
 
 export async function GET() {
   try {

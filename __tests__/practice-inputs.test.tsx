@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { PracticeInputs } from "@/app/practice-inputs";
+import { PracticeInputs } from "@/features/practice-inputs/components/practice-inputs";
 
 describe("PracticeInputs", () => {
   it("adds first number and second number", async () => {

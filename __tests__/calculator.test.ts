@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { add, calculate, formatResult } from "@/lib/calculator";
+import {
+  add,
+  calculate,
+  formatResult,
+} from "@/features/calculator/model/calculator";
 
 describe("calculate", () => {
   it("adds two numbers", () => {

@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { MonthCalendar } from "@/components/schedule/month-calendar";
-import type { CalendarEvent } from "@/lib/events";
+import { MonthCalendar } from "@/features/schedule/components/month-calendar";
+import type { CalendarEvent } from "@/features/schedule/model/events";
 
 const event: CalendarEvent = {
   id: 1,
