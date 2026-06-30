@@ -1,8 +1,5 @@
-import { eq } from "drizzle-orm";
-
 import { eventInputSchema } from "@/features/schedule/model/events-validation";
-import { db } from "@/features/schedule/server/db";
-import { events } from "@/features/schedule/server/schema";
+import { eventRepository } from "@/features/schedule/server/repositories/event-repository";
 
 type EventRouteContext = {
   params: Promise<{ id: string }>;
@@ -33,18 +30,7 @@ export async function PATCH(request: Request, context: EventRouteContext) {
   }
 
   try {
-    const [updatedEvent] = await db
-      .update(events)
-      .set({
-        ...parsed.data,
-        description: parsed.data.description || null,
-        location: parsed.data.location || null,
-        startAt: new Date(parsed.data.startAt),
-        endAt: new Date(parsed.data.endAt),
-        updatedAt: new Date(),
-      })
-      .where(eq(events.id, id))
-      .returning();
+    const updatedEvent = await eventRepository.updateById(id, parsed.data);
 
     if (!updatedEvent) {
       return Response.json(
@@ -71,10 +57,7 @@ export async function DELETE(_request: Request, context: EventRouteContext) {
   }
 
   try {
-    const [deletedEvent] = await db
-      .delete(events)
-      .where(eq(events.id, id))
-      .returning({ id: events.id });
+    const deletedEvent = await eventRepository.deleteById(id);
 
     if (!deletedEvent) {
       return Response.json(
