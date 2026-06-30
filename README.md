@@ -36,8 +36,7 @@ features/
 │  ├─ hooks/                 # 일정 API 상태 관리
 │  ├─ model/                 # 일정 타입, 상수, 검증
 │  └─ server/
-│     ├─ db.ts               # PostgreSQL 연결
-│     ├─ schema.ts           # Drizzle 테이블 정의
+│     ├─ schema.ts           # Drizzle 일정 테이블 정의
 │     └─ repositories/       # 일정 데이터 접근
 ├─ calculator/
 │  ├─ components/            # 계산기 화면
@@ -47,6 +46,7 @@ features/
 └─ todo/                     # Todo 연습 기능과 스키마
 shared/
 ├─ lib/                      # 도메인을 모르는 공통 유틸리티
+├─ server/                   # PostgreSQL 연결 등 공통 서버 인프라
 └─ ui/                       # shadcn 공통 UI
 ```
 
@@ -61,6 +61,8 @@ shared <- features <- app
 - 서로 다른 feature끼리는 직접 import할 수 없습니다.
 - 일정 타입과 비즈니스 규칙은 도메인 코드이므로 `shared`가 아닌 `features/schedule`에 둡니다.
 - 스키마, 타입, 상수는 feature의 `model`에 두고 순수 계산·변환 함수는 `utils`에 둡니다.
+- PostgreSQL 연결처럼 도메인을 모르는 서버 인프라는 `shared/server`에 둡니다.
+- 공통 DB 클라이언트는 feature의 스키마를 import하지 않습니다.
 - Route Handler는 ORM을 직접 호출하지 않고 도메인 Repository를 통해 DB에 접근합니다.
 - 위 규칙은 `eslint.config.mjs`의 `architecture/layer-dependencies` 규칙으로 검사합니다.
 

@@ -1,7 +1,8 @@
 import { asc, eq } from "drizzle-orm";
 
+import { db } from "@/shared/server/database";
+
 import type { EventInput } from "../../model/events";
-import { db } from "../db";
 import { events } from "../schema";
 
 function toEventValues(input: EventInput) {
