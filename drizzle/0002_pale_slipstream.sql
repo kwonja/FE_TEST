@@ -1,0 +1,2 @@
+ALTER TABLE "events" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+ALTER TABLE "todos" ENABLE ROW LEVEL SECURITY;
