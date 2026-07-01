@@ -28,4 +28,4 @@ export const events = pgTable("events", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
-});
+}).enableRLS();
