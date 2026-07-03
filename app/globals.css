@@ -164,8 +164,26 @@
   animation: ladder-step-draw 240ms linear forwards;
 }
 
+@keyframes random-draw-shuffle {
+  0%,
+  100% {
+    transform: rotate(-2deg) scale(1);
+  }
+  50% {
+    transform: rotate(2deg) scale(1.04);
+  }
+}
+
+.random-draw-number--shuffling {
+  animation: random-draw-shuffle 140ms steps(2, end) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ladder-step-motion {
     animation-duration: 1ms;
+  }
+
+  .random-draw-number--shuffling {
+    animation: none;
   }
 }
