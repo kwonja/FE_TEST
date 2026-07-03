@@ -101,6 +101,8 @@ export function LadderBoard({
     currentStep > 0
       ? createPath(routePoints.slice(currentStep - 1, currentStep + 1))
       : null;
+  const mobileBoardMinWidth =
+    ladder.playerCount > 6 ? ladder.playerCount * 56 : undefined;
 
   useEffect(() => {
     if (selectedParticipant === null || routePoints.length < 2) {
@@ -127,68 +129,77 @@ export function LadderBoard({
 
   return (
     <div
-      className="mx-auto w-full min-w-0"
-      style={{ maxWidth: `${boardSize.width}px` }}
-      data-testid="ladder-board"
-      aria-label="사다리 게임판"
+      className="w-full overflow-x-auto overscroll-x-contain pb-2"
+      data-testid="ladder-board-scroll"
     >
       <div
-        className="grid gap-1.5"
+        className="mx-auto w-full"
         style={{
-          gridTemplateColumns: `repeat(${ladder.playerCount}, minmax(0, 1fr))`,
+          maxWidth: `${boardSize.width}px`,
+          minWidth: mobileBoardMinWidth
+            ? `${mobileBoardMinWidth}px`
+            : undefined,
         }}
+        data-testid="ladder-board"
+        aria-label="사다리 게임판"
       >
-        {participants.map((participant, index) => (
-          <Button
-            key={`${participant}-${index}`}
-            type="button"
-            title={`${participant} 경로 확인`}
-            aria-label={`${participant} 경로 확인`}
-            onClick={() => onSelectParticipant(index)}
-            style={{
-              color: "var(--game-ink)",
-            }}
-            className={cn(
-              "h-auto min-w-0 flex-col gap-2 bg-transparent p-0 text-[11px] font-bold hover:bg-transparent sm:text-xs",
-            )}
-          >
-            <span
-              className={cn(
-                "grid size-9 place-items-center rounded-md border border-game-ink font-mono text-sm font-black transition-transform sm:size-11",
-                PLAYER_STYLES[index % PLAYER_STYLES.length].foreground,
-                selectedParticipant === index &&
-                  "-translate-y-1 ring-4 ring-game-acid",
-              )}
-              style={{
-                backgroundColor:
-                  PLAYER_STYLES[index % PLAYER_STYLES.length].stroke,
-              }}
-            >
-              <Play className="size-3" aria-hidden="true" />
-            </span>
-            <span className="truncate">{shortenLabel(participant)}</span>
-          </Button>
-        ))}
-      </div>
-
-      <div className="mt-4 border-y border-game-ink/20 bg-white p-3 sm:p-5">
         <div
-          className="relative w-full"
+          className="grid gap-1.5"
           style={{
-            aspectRatio: `${boardSize.width} / ${boardSize.height}`,
+            gridTemplateColumns: `repeat(${ladder.playerCount}, minmax(0, 1fr))`,
           }}
         >
-          <svg
-            className="absolute inset-0 h-full w-full overflow-visible"
-            viewBox={`0 0 ${boardSize.width} ${boardSize.height}`}
-            role="img"
-            aria-label={
-              selectedParticipant === null
-                ? "선택을 기다리는 사다리"
-                : `${participants[selectedParticipant]}의 경로`
-            }
-            preserveAspectRatio="none"
+          {participants.map((participant, index) => (
+            <Button
+              key={`${participant}-${index}`}
+              type="button"
+              title={`${participant} 경로 확인`}
+              aria-label={`${participant} 경로 확인`}
+              onClick={() => onSelectParticipant(index)}
+              style={{
+                color: "var(--game-ink)",
+              }}
+              className={cn(
+                "h-auto min-w-0 flex-col gap-2 bg-transparent p-0 text-[11px] font-bold hover:bg-transparent sm:text-xs",
+              )}
+            >
+              <span
+                className={cn(
+                  "grid size-9 place-items-center rounded-md border border-game-ink font-mono text-sm font-black transition-transform sm:size-11",
+                  PLAYER_STYLES[index % PLAYER_STYLES.length].foreground,
+                  selectedParticipant === index &&
+                    "-translate-y-1 ring-4 ring-game-acid",
+                )}
+                style={{
+                  backgroundColor:
+                    PLAYER_STYLES[index % PLAYER_STYLES.length].stroke,
+                }}
+              >
+                <Play className="size-3" aria-hidden="true" />
+              </span>
+              <span className="truncate">{shortenLabel(participant)}</span>
+            </Button>
+          ))}
+        </div>
+
+        <div className="mt-4 border-y border-game-ink/20 bg-white p-3 sm:p-5">
+          <div
+            className="relative w-full"
+            style={{
+              aspectRatio: `${boardSize.width} / ${boardSize.height}`,
+            }}
           >
+            <svg
+              className="absolute inset-0 h-full w-full overflow-visible"
+              viewBox={`0 0 ${boardSize.width} ${boardSize.height}`}
+              role="img"
+              aria-label={
+                selectedParticipant === null
+                  ? "선택을 기다리는 사다리"
+                  : `${participants[selectedParticipant]}의 경로`
+              }
+              preserveAspectRatio="none"
+            >
             {Array.from(
               { length: ladder.playerCount + 1 },
               (_, boundary) => (
@@ -280,48 +291,49 @@ export function LadderBoard({
                 vectorEffect="non-scaling-stroke"
               />
             ) : null}
-          </svg>
+            </svg>
 
-          {selectedParticipant !== null && currentPoint && selectedStyle ? (
-            <div
-              data-testid="ladder-token"
-              className="absolute z-10 grid size-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-md border-2 border-white font-mono text-xs font-black text-white shadow-[0_4px_12px_rgb(0_0_0/0.22)] transition-[left,top] ease-linear motion-reduce:transition-none"
-              style={{
-                left: `${(getPointPosition(currentPoint).x / boardSize.width) * 100}%`,
-                top: `${(getPointPosition(currentPoint).y / boardSize.height) * 100}%`,
-                backgroundColor: selectedStyle.stroke,
-                transitionDuration: `${STEP_DURATION_MS}ms`,
-              }}
-              aria-hidden="true"
-            >
-              {selectedParticipant + 1}
-            </div>
-          ) : null}
-        </div>
-      </div>
-
-      <div
-        className="grid gap-px bg-game-ink"
-        style={{
-          gridTemplateColumns: `repeat(${ladder.playerCount}, minmax(0, 1fr))`,
-        }}
-      >
-        {results.map((result, index) => (
-          <div
-            key={`${result}-${index}`}
-            title={result}
-            className={cn(
-              "flex min-h-14 min-w-0 flex-col items-center justify-center bg-game-paper px-1 py-2 text-center text-[11px] font-bold transition-colors sm:min-h-16 sm:text-xs",
-              selectedDestination === index &&
-                "bg-game-acid text-game-ink",
-            )}
-          >
-            <span className="mb-1 font-mono text-[9px] opacity-60">
-              SLOT {String(index + 1).padStart(2, "0")}
-            </span>
-            <span className="truncate">{shortenLabel(result)}</span>
+            {selectedParticipant !== null && currentPoint && selectedStyle ? (
+              <div
+                data-testid="ladder-token"
+                className="absolute z-10 grid size-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-md border-2 border-white font-mono text-xs font-black text-white shadow-[0_4px_12px_rgb(0_0_0/0.22)] transition-[left,top] ease-linear motion-reduce:transition-none"
+                style={{
+                  left: `${(getPointPosition(currentPoint).x / boardSize.width) * 100}%`,
+                  top: `${(getPointPosition(currentPoint).y / boardSize.height) * 100}%`,
+                  backgroundColor: selectedStyle.stroke,
+                  transitionDuration: `${STEP_DURATION_MS}ms`,
+                }}
+                aria-hidden="true"
+              >
+                {selectedParticipant + 1}
+              </div>
+            ) : null}
           </div>
-        ))}
+        </div>
+
+        <div
+          className="grid gap-px bg-game-ink"
+          style={{
+            gridTemplateColumns: `repeat(${ladder.playerCount}, minmax(0, 1fr))`,
+          }}
+        >
+          {results.map((result, index) => (
+            <div
+              key={`${result}-${index}`}
+              title={result}
+              className={cn(
+                "flex min-h-14 min-w-0 flex-col items-center justify-center bg-game-paper px-1 py-2 text-center text-[11px] font-bold transition-colors sm:min-h-16 sm:text-xs",
+                selectedDestination === index &&
+                  "bg-game-acid text-game-ink",
+              )}
+            >
+              <span className="mb-1 font-mono text-[9px] opacity-60">
+                SLOT {String(index + 1).padStart(2, "0")}
+              </span>
+              <span className="truncate">{shortenLabel(result)}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

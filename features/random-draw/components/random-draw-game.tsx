@@ -78,7 +78,7 @@ export function RandomDrawGame() {
   return (
     <main className="min-h-screen bg-game-paper text-game-ink">
       <header className="border-b-2 border-game-ink bg-game-ink text-white">
-        <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between px-5 py-3 sm:px-8">
+        <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between px-4 py-3 sm:px-8">
           <Link href="/" className="flex items-center gap-2 text-xl font-black">
             <span className="grid size-9 place-items-center rounded-md bg-primary text-primary-foreground">
               <Dices className="size-5" aria-hidden="true" />
@@ -87,7 +87,7 @@ export function RandomDrawGame() {
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-2 rounded-md px-3 py-2 font-bold hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/60"
+            className="flex items-center gap-2 rounded-md px-2 py-2 text-sm font-bold hover:bg-white/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/60 sm:px-3 sm:text-base"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             게임 목록
@@ -95,19 +95,19 @@ export function RandomDrawGame() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
+      <div className="mx-auto max-w-6xl px-4 py-7 sm:px-8 sm:py-12">
         <div className="mb-7">
           <p className="mb-3 flex items-center gap-2 font-mono text-xs font-black tracking-[0.14em]">
             <Sparkles className="size-4" aria-hidden="true" />
             GAME 002 / RANDOM DRAW
           </p>
-          <h1 className="text-5xl font-black leading-none sm:text-6xl">
+          <h1 className="text-4xl font-black leading-none sm:text-6xl">
             1~100 랜덤 뽑기
           </h1>
         </div>
 
-        <div className="grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[minmax(0,1fr)_300px]">
-          <section className="flex min-h-[430px] flex-col items-center justify-center bg-primary p-6 text-center sm:min-h-[540px] sm:p-10">
+        <div className="grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[minmax(0,1fr)_300px]">
+          <section className="flex min-h-[400px] flex-col items-center justify-center bg-primary p-4 text-center sm:min-h-[540px] sm:p-10">
             <p
               className="font-mono text-xs font-black tracking-[0.18em]"
               data-testid="random-draw-phase"
@@ -115,7 +115,7 @@ export function RandomDrawGame() {
               {phase} · INCLUSIVE RANGE
             </p>
             <div
-              className={`random-draw-number my-8 grid size-52 place-items-center rounded-full border-[6px] border-game-ink bg-game-acid text-7xl font-black tabular-nums sm:size-72 sm:text-9xl ${phase === "DRAWING" ? "random-draw-number--shuffling" : ""}`}
+              className={`random-draw-number my-7 grid size-44 place-items-center rounded-full border-[6px] border-game-ink bg-game-acid text-6xl font-black tabular-nums sm:my-8 sm:size-72 sm:text-9xl ${phase === "DRAWING" ? "random-draw-number--shuffling" : ""}`}
               data-testid="random-draw-number"
               aria-hidden="true"
             >

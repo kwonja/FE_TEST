@@ -14,10 +14,18 @@
 - 참가자와 결과 편집, 사다리 무작위 생성, 경로 애니메이션과 결과 공개
 - `/games/random-draw`: 중복을 허용해 1~100 중 하나를 뽑고 최근 결과 5개를 표시
 - 숫자가 빠르게 바뀌는 셔플 애니메이션과 결과 공개 연출(모션 감소 설정 지원)
+- 게임 허브, 사다리 타기, 랜덤 뽑기는 최소 370px 너비부터 반응형 UI를 지원
 - 일정 캘린더와 테이블 UI 코드는 `features/schedule`에 보존하며 현재 페이지 라우트에는 연결하지 않음
 - `/api/events`: 일정 조회와 생성을 위한 Route Handler
 - `/api/events/[id]`: 일정 수정과 삭제를 위한 Route Handler
 - 캘린더와 테이블은 동일한 Supabase 데이터를 사용
+
+## 반응형 정책
+
+- 지원하는 최소 화면 너비는 370px입니다.
+- 모바일은 370~500px, 일반 화면은 501px 이상으로 구분합니다.
+- Tailwind `sm` breakpoint는 501px(`31.3125rem`)이며 `app/globals.css`에서 중앙 관리합니다.
+- Playwright `responsive-boundary` 테스트는 게임 허브, 사다리 타기, 랜덤 뽑기의 370px·500px·501px 경계와 10명 사다리 출발점 겹침 방지를 검증합니다.
 
 ## 기술 스택
 
@@ -123,6 +131,7 @@ npm run dev          # 개발 서버
 npm run build        # 프로덕션 빌드
 npm run lint         # ESLint와 레이어 의존성 검사
 npm run test:run     # Vitest/RTL 일괄 실행
+npm run test:e2e     # Playwright E2E 및 반응형 경계 검사
 npm run db:generate  # 스키마 변경 마이그레이션 생성
 npm run db:migrate   # 데이터베이스에 마이그레이션 적용
 npm run db:studio    # Drizzle Studio
