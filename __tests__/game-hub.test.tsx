@@ -11,8 +11,13 @@ describe("GameHub", () => {
       screen.getByRole("link", { name: /사다리.*OPEN/ }),
     ).toHaveAttribute("href", "/games/ladder");
     expect(
+      screen.getByRole("link", { name: /랜덤 뽑기.*OPEN/ }),
+    ).toHaveAttribute("href", "/games/random-draw");
+    expect(
       screen.getByRole("button", { name: /룰렛.*SOON/ }),
     ).toBeDisabled();
-    expect(screen.getAllByRole("button")).toHaveLength(5);
+    expect(screen.getAllByRole("button")).toHaveLength(4);
+    expect(screen.getByText("GAME 002")).toBeInTheDocument();
+    expect(screen.getByText("02")).toBeInTheDocument();
   });
 });

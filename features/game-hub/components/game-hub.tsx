@@ -27,9 +27,9 @@ const quickStartGames = [
     color: "bg-game-coral",
   },
   {
-    title: "제비뽑기",
+    title: "랜덤 뽑기",
     icon: Ticket,
-    href: undefined,
+    href: "/games/random-draw",
     color: "bg-game-acid",
   },
   {
@@ -109,6 +109,16 @@ function LadderPreview() {
         />
       ))}
     </svg>
+  );
+}
+
+function RandomDrawPreview() {
+  return (
+    <div className="grid h-full min-h-72 place-items-center bg-game-acid p-8">
+      <div className="grid size-48 place-items-center rounded-full border-[6px] border-game-ink bg-primary text-8xl font-black shadow-[8px_8px_0_var(--game-coral)]">
+        ?
+      </div>
+    </div>
   );
 }
 
@@ -210,7 +220,7 @@ export function GameHub() {
             </h1>
           </div>
           <div className="flex items-end gap-3 border-l-2 border-game-ink pl-5">
-            <strong className="font-mono text-5xl leading-none">01</strong>
+            <strong className="font-mono text-5xl leading-none">02</strong>
             <span className="pb-1 text-xs font-black leading-4">
               PLAYABLE
               <br />
@@ -253,6 +263,31 @@ export function GameHub() {
               <p className="mt-3 max-w-sm leading-7 text-muted-foreground">
                 이름과 결과를 적고 출발점을 선택하세요. 움직이는 말을 따라
                 마지막 칸까지 내려갑니다.
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          href="/games/random-draw"
+          className="group mt-10 grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[8px_8px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary lg:grid-cols-[1.25fr_0.75fr]"
+        >
+          <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
+            <RandomDrawPreview />
+          </div>
+          <div className="flex min-h-64 flex-col justify-between bg-white p-6 sm:p-8">
+            <div className="flex items-start justify-between">
+              <span className="font-mono text-sm font-black">GAME 002</span>
+              <span className="grid size-11 place-items-center rounded-md border-2 border-game-ink bg-game-coral transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">
+                <ArrowUpRight className="size-6" aria-hidden="true" />
+              </span>
+            </div>
+            <div>
+              <Badge className="mb-4 bg-game-acid text-game-ink">1~100</Badge>
+              <h3 className="text-4xl font-black">랜덤 뽑기</h3>
+              <p className="mt-3 max-w-sm leading-7 text-muted-foreground">
+                버튼 한 번으로 숫자 하나를 뽑으세요. 최근 결과 다섯 개를
+                확인하고 같은 숫자도 다시 만날 수 있습니다.
               </p>
             </div>
           </div>
