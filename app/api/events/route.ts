@@ -1,12 +1,9 @@
-import { asc } from "drizzle-orm";
-
 import { eventInputSchema } from "@/features/schedule/model/events-validation";
-import { db } from "@/features/schedule/server/db";
-import { events } from "@/features/schedule/server/schema";
+import { eventRepository } from "@/features/schedule/server/repositories/event-repository";
 
 export async function GET() {
   try {
-    const eventList = await db.select().from(events).orderBy(asc(events.startAt));
+    const eventList = await eventRepository.findAll();
 
     return Response.json(eventList);
   } catch {
@@ -29,16 +26,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const [createdEvent] = await db
-      .insert(events)
-      .values({
-        ...parsed.data,
-        description: parsed.data.description || null,
-        location: parsed.data.location || null,
-        startAt: new Date(parsed.data.startAt),
-        endAt: new Date(parsed.data.endAt),
-      })
-      .returning();
+    const createdEvent = await eventRepository.create(parsed.data);
 
     return Response.json(createdEvent, { status: 201 });
   } catch {

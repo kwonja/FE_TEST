@@ -32,6 +32,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 도메인 타입, 상태, 검증, 비즈니스 규칙은 `shared`에 두지 않는다.
 - feature 내부의 스키마, 타입, 상수는 `model`에 둔다.
 - 입력값을 계산하거나 변환하는 순수 함수는 feature 내부의 `utils`에 둔다.
+- Route Handler에서 ORM을 직접 호출하지 않고 feature의 `server/repositories`를 통해 DB에 접근한다.
+- Repository는 범용 Base Repository보다 도메인별 메서드를 명시적으로 정의한다.
+- DB 연결처럼 도메인을 모르는 서버 인프라는 `shared/server`에 둔다.
+- `shared/server`의 DB 클라이언트는 feature의 스키마를 import하지 않는다.
 - 두 화면이 같은 도메인 모델을 공유한다면 별도 feature로 나누기보다 하나의 feature 내부 모듈로 구성한다.
 - 레이어 및 feature 간 import 제한은 ESLint 규칙을 따른다.
 
@@ -54,3 +58,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 - 변경사항을 검증할 때는 반드시 관련 테스트를 실행한다.
 - 이 프로젝트에서는 Vitest/RTL 검증에 `npm run test:run`을 실행한다.
+
+## 역할별 서브에이전트 워크플로
+
+1. `ui-designer`와 `architect`를 병렬 실행한다.
+2. 두 결과를 취합한 후 `frontend`가 구현한다.
+3. 구현 후 `reviewer`가 검토한다.
+4. 리뷰 반영이 끝나면 관련 테스트와 검증 명령을 실행한다.
+5. 검증을 통과하면 변경사항을 커밋하고 원격 브랜치에 push한 뒤 PR을 생성한다.
+6. PR 생성 후 `readme-writer`가 문서를 갱신한다.
+7. 문서 변경사항은 같은 브랜치에 후속 커밋하고 push하여 열린 PR에 포함한다.
+8. 각 단계의 상태와 최종 결과를 사용자에게 보고한다.

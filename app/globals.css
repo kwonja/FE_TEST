@@ -39,6 +39,13 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-game-ink: var(--game-ink);
+  --color-game-paper: var(--game-paper);
+  --color-game-acid: var(--game-acid);
+  --color-game-coral: var(--game-coral);
+  --color-game-mint: var(--game-mint);
+  --color-game-sky: var(--game-sky);
+  --color-game-grid: var(--game-grid);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -49,30 +56,48 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --primary-hsl: 256 83% 77%;
+  --primary: hsl(var(--primary-hsl));
+  --primary-foreground: hsl(253 32% 13%);
+  --background: hsl(48 38% 96%);
+  --foreground: hsl(165 18% 12%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: var(--foreground);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: var(--foreground);
+  --secondary: hsl(53 97% 62%);
+  --secondary-foreground: hsl(165 18% 12%);
+  --muted: hsl(48 22% 91%);
+  --muted-foreground: hsl(165 8% 38%);
+  --accent: hsl(153 53% 73%);
+  --accent-foreground: hsl(165 22% 13%);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: hsl(165 18% 12%);
+  --input: hsl(165 12% 78%);
+  --ring: var(--primary);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+  --radius: 0.5rem;
+  --game-ink: hsl(165 18% 12%);
+  --game-paper: hsl(48 38% 96%);
+  --game-acid: hsl(53 97% 62%);
+  --game-coral: hsl(10 88% 64%);
+  --game-mint: hsl(153 53% 73%);
+  --game-sky: hsl(196 76% 72%);
+  --game-grid: hsl(160 13% 84%);
+  --player-1: hsl(10 88% 64%);
+  --player-2: hsl(44 88% 52%);
+  --player-3: hsl(157 68% 40%);
+  --player-4: hsl(196 64% 50%);
+  --player-5: hsl(var(--primary-hsl));
+  --player-6: hsl(330 60% 60%);
+  --player-7: hsl(26 84% 56%);
+  --player-8: hsl(160 35% 34%);
+  --player-9: hsl(12 47% 48%);
+  --player-10: hsl(208 35% 46%);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -90,8 +115,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: hsl(var(--primary-hsl));
+  --primary-foreground: hsl(253 32% 13%);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -126,5 +151,39 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@keyframes ladder-step-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.ladder-step-motion {
+  animation: ladder-step-draw 240ms linear forwards;
+}
+
+@keyframes random-draw-shuffle {
+  0%,
+  100% {
+    transform: rotate(-2deg) scale(1);
+  }
+  50% {
+    transform: rotate(2deg) scale(1.04);
+  }
+}
+
+.random-draw-number--shuffling {
+  animation: random-draw-shuffle 140ms steps(2, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ladder-step-motion {
+    animation-duration: 1ms;
+  }
+
+  .random-draw-number--shuffling {
+    animation: none;
   }
 }

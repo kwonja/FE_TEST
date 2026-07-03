@@ -7,10 +7,10 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 
 export const metadata: Metadata = {
   title: {
-    default: "Dayline",
-    template: "%s | Dayline",
+    default: "한판",
+    template: "%s | 한판",
   },
-  description: "캘린더와 테이블로 일정을 관리하는 Next.js 사이드 프로젝트",
+  description: "가볍게 모여 함께 즐기는 웹 게임 모음",
 };
 
 export default function RootLayout({

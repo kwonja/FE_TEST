@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { GameHub } from "@/features/game-hub/components/game-hub";
 
 export default function Home() {
-  redirect("/calendar");
+  return <GameHub />;
 }
