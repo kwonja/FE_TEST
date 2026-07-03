@@ -38,7 +38,7 @@ export function generateLadder(playerCount: number, seed: number): Ladder {
   const levelCount = playerCount;
   const bridges: LadderBridge[] = [];
 
-  for (let level = 0; level < levelCount; level += 1) {
+  for (let level = 0; level < levelCount - 1; level += 1) {
     for (let leftColumn = 0; leftColumn < playerCount - 1; leftColumn += 1) {
       if (random() < 0.42) {
         bridges.push({ level, leftColumn });
@@ -48,7 +48,7 @@ export function generateLadder(playerCount: number, seed: number): Ladder {
   }
 
   if (bridges.length === 0) {
-    bridges.push({ level: Math.floor(levelCount / 2), leftColumn: 0 });
+    bridges.push({ level: Math.floor((levelCount - 1) / 2), leftColumn: 0 });
   }
 
   return {
