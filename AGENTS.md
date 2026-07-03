@@ -64,5 +64,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 1. `ui-designer`와 `architect`를 병렬 실행한다.
 2. 두 결과를 취합한 후 `frontend`가 구현한다.
 3. 구현 후 `reviewer`가 검토한다.
-4. 리뷰 반영이 끝나면 `readme-writer`가 문서를 갱신한다.
-5. 각 단계의 상태와 최종 결과를 사용자에게 보고한다.
+4. 리뷰 반영이 끝나면 관련 테스트와 검증 명령을 실행한다.
+5. 검증을 통과하면 변경사항을 커밋하고 원격 브랜치에 push한 뒤 PR을 생성한다.
+6. PR 생성 후 `readme-writer`가 문서를 갱신한다.
+7. 문서 변경사항은 같은 브랜치에 후속 커밋하고 push하여 열린 PR에 포함한다.
+8. 각 단계의 상태와 최종 결과를 사용자에게 보고한다.
