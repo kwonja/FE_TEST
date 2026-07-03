@@ -228,14 +228,14 @@ export function LadderGame() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-7 sm:py-12">
+      <div className="mx-auto max-w-[1600px] px-4 py-7 sm:px-7 sm:py-12">
         <div className="mb-7 flex items-end justify-between">
           <div>
             <div className="mb-3 flex items-center gap-2 font-mono text-xs font-black tracking-[0.14em]">
               <Sparkles className="size-4" aria-hidden="true" />
               GAME 001 / LADDER
             </div>
-            <h1 className="text-5xl font-black leading-none sm:text-6xl">
+            <h1 className="text-4xl font-black leading-none sm:text-6xl">
               사다리 타기
             </h1>
           </div>
@@ -245,8 +245,8 @@ export function LadderGame() {
           </div>
         </div>
 
-        <div className="grid overflow-hidden rounded-md border border-game-ink/25 bg-white shadow-[0_24px_80px_rgb(40_31_64/0.22)] xl:grid-cols-[340px_minmax(0,1fr)]">
-          <aside className="border-b border-white/10 bg-game-ink p-5 text-white xl:min-h-[720px] xl:border-r xl:border-b-0 xl:border-white/10">
+        <div className="grid overflow-hidden rounded-md border border-game-ink/25 bg-white shadow-[0_14px_40px_rgb(40_31_64/0.18)] sm:shadow-[0_24px_80px_rgb(40_31_64/0.22)] xl:grid-cols-[340px_minmax(0,1fr)]">
+          <aside className="border-b border-white/10 bg-game-ink p-4 text-white sm:p-5 xl:min-h-[720px] xl:border-r xl:border-b-0 xl:border-white/10">
             <div className="mb-5 flex items-center justify-between">
               <div>
                 <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-primary">
