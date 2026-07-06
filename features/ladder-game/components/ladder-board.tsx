@@ -40,41 +40,62 @@ type LadderBoardProps = {
   ) => void;
 };
 
-function getBoardSize(ladder: Ladder) {
+const getBoardSize = (ladder: Ladder) => {
   return {
     width: ladder.playerCount * CELL_SIZE,
-    height: ladder.levelCount * CELL_SIZE,
+    height: ladder.rowCount * CELL_SIZE,
   };
-}
+};
 
-function getPointPosition(point: LadderRoutePoint) {
+const getPointPosition = (point: LadderRoutePoint) => {
   return {
     x: (point.column + 0.5) * CELL_SIZE,
     y: point.row * CELL_SIZE,
   };
-}
+};
 
-function createPath(points: LadderRoutePoint[]) {
+const createPath = (points: LadderRoutePoint[]) => {
   return points
     .map((point, index) => {
       const position = getPointPosition(point);
       return `${index === 0 ? "M" : "L"} ${position.x} ${position.y}`;
     })
     .join(" ");
-}
+};
 
-function shortenLabel(value: string) {
+const shortenLabel = (value: string) => {
   return value.length > 8 ? `${value.slice(0, 7)}…` : value;
-}
+};
 
-export function LadderBoard({
+const usePrefersReducedMotion = () => {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (!window.matchMedia) {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    updatePreference();
+    mediaQuery.addEventListener("change", updatePreference);
+
+    return () => mediaQuery.removeEventListener("change", updatePreference);
+  }, []);
+
+  return prefersReducedMotion;
+};
+
+export const LadderBoard = ({
   ladder,
   participants,
   results,
   selectedParticipant,
   onSelectParticipant,
   onRouteComplete,
-}: LadderBoardProps) {
+}: LadderBoardProps) => {
+  const prefersReducedMotion = usePrefersReducedMotion();
   const routePoints = useMemo(
     () =>
       selectedParticipant === null
@@ -82,50 +103,34 @@ export function LadderBoard({
         : createLadderRoute(ladder, selectedParticipant),
     [ladder, selectedParticipant],
   );
-  const [currentStep, setCurrentStep] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
   const boardSize = getBoardSize(ladder);
-  const currentPoint = routePoints[currentStep];
   const selectedStyle =
     selectedParticipant === null
       ? null
       : PLAYER_STYLES[selectedParticipant % PLAYER_STYLES.length];
-  const isComplete =
-    routePoints.length > 0 && currentStep === routePoints.length - 1;
   const selectedDestination =
     selectedParticipant !== null && isComplete
       ? getLadderDestination(ladder, selectedParticipant)
       : null;
-  const completedPath =
-    currentStep > 1 ? createPath(routePoints.slice(0, currentStep)) : null;
-  const activePath =
-    currentStep > 0
-      ? createPath(routePoints.slice(currentStep - 1, currentStep + 1))
-      : null;
+  const fullPath = routePoints.length > 1 ? createPath(routePoints) : null;
+  const routeDuration = prefersReducedMotion
+    ? 1
+    : (routePoints.length - 1) * STEP_DURATION_MS;
   const mobileBoardMinWidth =
     ladder.playerCount > 6 ? ladder.playerCount * 56 : undefined;
 
-  useEffect(() => {
-    if (selectedParticipant === null || routePoints.length < 2) {
+  const completeRoute = () => {
+    if (selectedParticipant === null) {
       return;
     }
 
-    let nextStep = 1;
-    const intervalId = window.setInterval(() => {
-      setCurrentStep(nextStep);
-
-      if (nextStep === routePoints.length - 1) {
-        window.clearInterval(intervalId);
-        onRouteComplete(
-          selectedParticipant,
-          getLadderDestination(ladder, selectedParticipant),
-        );
-      }
-
-      nextStep += 1;
-    }, STEP_DURATION_MS);
-
-    return () => window.clearInterval(intervalId);
-  }, [ladder, onRouteComplete, routePoints, selectedParticipant]);
+    setIsComplete(true);
+    onRouteComplete(
+      selectedParticipant,
+      getLadderDestination(ladder, selectedParticipant),
+    );
+  };
 
   return (
     <div
@@ -182,12 +187,14 @@ export function LadderBoard({
           ))}
         </div>
 
-        <div className="mt-4 border-y border-game-ink/20 bg-white p-3 sm:p-5">
+        <div className="mt-8 border-y border-game-ink/20 bg-white px-3 py-6 sm:px-5 sm:py-8">
           <div
             className="relative w-full"
+            data-testid="ladder-route-animation"
             style={{
               aspectRatio: `${boardSize.width} / ${boardSize.height}`,
             }}
+            onAnimationEnd={completeRoute}
           >
             <svg
               className="absolute inset-0 h-full w-full overflow-visible"
@@ -217,7 +224,7 @@ export function LadderBoard({
               ),
             )}
             {Array.from(
-              { length: ladder.levelCount + 1 },
+              { length: ladder.rowCount + 1 },
               (_, boundary) => (
                 <line
                   key={`grid-row-${boundary}`}
@@ -248,11 +255,11 @@ export function LadderBoard({
             ))}
 
             {ladder.bridges.map((bridge) => {
-              const y = (bridge.level + 1) * CELL_SIZE;
+              const y = bridge.row * CELL_SIZE;
 
               return (
                 <line
-                  key={`${bridge.level}-${bridge.leftColumn}`}
+                  key={`${bridge.row}-${bridge.leftColumn}`}
                   x1={(bridge.leftColumn + 0.5) * CELL_SIZE}
                   x2={(bridge.leftColumn + 1.5) * CELL_SIZE}
                   y1={y}
@@ -265,49 +272,60 @@ export function LadderBoard({
               );
             })}
 
-            {completedPath && selectedStyle ? (
+            {fullPath && selectedStyle ? (
               <path
-                d={completedPath}
-                fill="none"
-                stroke={selectedStyle.stroke}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="9"
-                vectorEffect="non-scaling-stroke"
-              />
-            ) : null}
-            {activePath && selectedStyle ? (
-              <path
-                key={`step-${currentStep}`}
-                className="ladder-step-motion"
-                d={activePath}
+                className="ladder-route-motion"
+                d={fullPath}
+                data-testid="ladder-route"
                 fill="none"
                 pathLength="1"
                 stroke={selectedStyle.stroke}
                 strokeDasharray="1"
                 strokeDashoffset="1"
                 strokeLinecap="round"
+                strokeLinejoin="round"
                 strokeWidth="9"
+                style={{ animationDuration: `${routeDuration}ms` }}
                 vectorEffect="non-scaling-stroke"
               />
             ) : null}
-            </svg>
 
-            {selectedParticipant !== null && currentPoint && selectedStyle ? (
-              <div
+            {selectedParticipant !== null && fullPath && selectedStyle ? (
+              <g
                 data-testid="ladder-token"
-                className="absolute z-10 grid size-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-md border-2 border-white font-mono text-xs font-black text-white shadow-[0_4px_12px_rgb(0_0_0/0.22)] transition-[left,top] ease-linear motion-reduce:transition-none"
-                style={{
-                  left: `${(getPointPosition(currentPoint).x / boardSize.width) * 100}%`,
-                  top: `${(getPointPosition(currentPoint).y / boardSize.height) * 100}%`,
-                  backgroundColor: selectedStyle.stroke,
-                  transitionDuration: `${STEP_DURATION_MS}ms`,
-                }}
                 aria-hidden="true"
               >
-                {selectedParticipant + 1}
-              </div>
+                <rect
+                  x="-16"
+                  y="-16"
+                  width="32"
+                  height="32"
+                  rx="6"
+                  fill={selectedStyle.stroke}
+                  stroke="white"
+                  strokeWidth="2"
+                  vectorEffect="non-scaling-stroke"
+                />
+                <text
+                  fill="white"
+                  fontFamily="monospace"
+                  fontSize="12"
+                  fontWeight="900"
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                >
+                  {selectedParticipant + 1}
+                </text>
+                <animateMotion
+                  data-testid="ladder-token-motion"
+                  path={fullPath}
+                  dur={`${routeDuration}ms`}
+                  calcMode="linear"
+                  fill="freeze"
+                />
+              </g>
             ) : null}
+            </svg>
           </div>
         </div>
 
@@ -337,4 +355,4 @@ export function LadderBoard({
       </div>
     </div>
   );
-}
+};
