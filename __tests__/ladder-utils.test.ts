@@ -4,6 +4,7 @@ import {
   createLadderRoute,
   generateLadder,
   getLadderDestination,
+  traceLadder,
 } from "@/features/ladder-game/utils/ladder";
 
 describe("사다리 계산", () => {
@@ -12,6 +13,15 @@ describe("사다리 계산", () => {
       generateLadder(4, 20260702),
     );
   });
+
+  it.each([3, 4, 5, 10])(
+    "참가자 %i명에서 인원수의 1.5배 높이를 올림해 생성한다",
+    (playerCount) => {
+      expect(generateLadder(playerCount, 1).levelCount).toBe(
+        Math.ceil(playerCount * 1.5),
+      );
+    },
+  );
 
   it("같은 높이에 서로 맞닿는 가로선을 만들지 않는다", () => {
     const ladder = generateLadder(8, 77);
@@ -25,6 +35,41 @@ describe("사다리 계산", () => {
         columns.some((column) => columns.includes(column + 1)),
       ).toBe(false);
     }
+  });
+
+  it.each([3, 4, 8, 10])(
+    "참가자 %i명의 마지막 레벨에는 가로선을 만들지 않고 이동 없이 추적한다",
+    (playerCount) => {
+      for (const seed of [0, 1, 77, 20260702]) {
+        const ladder = generateLadder(playerCount, seed);
+
+        expect(
+          ladder.bridges.every(
+            (bridge) => bridge.level < ladder.levelCount - 1,
+          ),
+        ).toBe(true);
+
+        for (let startColumn = 0; startColumn < playerCount; startColumn += 1) {
+          const trace = traceLadder(ladder, startColumn);
+          const lastStep = trace.at(-1);
+
+          expect(trace).toHaveLength(ladder.levelCount);
+          expect(lastStep?.fromColumn).toBe(lastStep?.toColumn);
+        }
+      }
+    },
+  );
+
+  it("가로선이 생성되지 않은 시드에서는 마지막 레벨 이전에 fallback을 만든다", () => {
+    const ladder = generateLadder(3, 41);
+
+    expect(ladder.bridges).toEqual([
+      {
+        level: Math.floor((ladder.levelCount - 1) / 2),
+        leftColumn: 0,
+      },
+    ]);
+    expect(ladder.bridges[0].level).toBeLessThan(ladder.levelCount - 1);
   });
 
   it("모든 참가자를 서로 다른 결과에 연결한다", () => {
