@@ -22,6 +22,12 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 이 프로젝트의 Next.js 버전은 기존 지식과 다를 수 있다.
 - Next.js 관련 코드를 수정하기 전에는 `node_modules/next/dist/docs/`의 관련 문서를 먼저 확인한다.
 
+## 함수 작성 방식
+
+- JavaScript/TypeScript에서 함수를 선언할 때는 일반 함수 선언(`function`) 대신 화살표 함수를 사용한다.
+- 컴포넌트, 훅, 유틸리티, 비동기 함수, export 함수 등 일반 코드에도 동일하게 적용한다.
+- 프레임워크나 외부 API의 규약 또는 문법상 일반 함수가 반드시 필요한 경우는 예외로 한다.
+
 ## Feature-based layered 구조
 
 - 소스 코드의 의존성 방향은 `shared` → `features` → `app` 순서를 따른다.
