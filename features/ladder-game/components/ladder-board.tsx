@@ -187,7 +187,7 @@ export const LadderBoard = ({
           ))}
         </div>
 
-        <div className="mt-4 border-y border-game-ink/20 bg-white p-3 sm:p-5">
+        <div className="mt-8 border-y border-game-ink/20 bg-white px-3 py-6 sm:px-5 sm:py-8">
           <div
             className="relative w-full"
             data-testid="ladder-route-animation"

@@ -74,15 +74,15 @@ export const LadderGame = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const frameId = window.requestAnimationFrame(() => {
+    const timeoutId = window.setTimeout(() => {
       setSnapshot(
         createSnapshot(DEFAULT_PARTICIPANTS, DEFAULT_RESULTS, Date.now()),
       );
       setIsPreparing(false);
       setMessage("위쪽 참가자를 선택하면 경로가 시작됩니다.");
-    });
+    }, 0);
 
-    return () => window.cancelAnimationFrame(frameId);
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const updateEntry = (
