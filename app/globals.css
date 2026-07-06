@@ -155,18 +155,6 @@
   }
 }
 
-@keyframes ladder-route-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-.ladder-route-motion {
-  animation-name: ladder-route-draw;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
-}
-
 @keyframes random-draw-shuffle {
   0%,
   100% {
@@ -182,10 +170,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ladder-route-motion {
-    animation-duration: 1ms;
-  }
-
   .random-draw-number--shuffling {
     animation: none;
   }

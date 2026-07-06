@@ -52,7 +52,27 @@ describe("LadderGame", () => {
       "d",
       expect.stringMatching(/^M \d+ \d+(?: L \d+ \d+)+$/),
     );
-    expect(route.style.animationDuration).toBe(tokenMotion.getAttribute("dur"));
-    expect(screen.getByRole("img", { name: "성민의 경로" })).toBeVisible();
+    expect(screen.getByTestId("ladder-route-draw")).toHaveAttribute(
+      "dur",
+      tokenMotion.getAttribute("dur"),
+    );
+    expect(tokenMotion).toHaveAttribute(
+      "begin",
+      "ladder-route-draw-animation.begin",
+    );
+    expect(tokenMotion).toHaveAttribute("calcMode", "paced");
+    fireEvent(
+      screen.getByTestId("ladder-route-draw"),
+      new Event("endEvent"),
+    );
+    expect(screen.getByTestId("ladder-result-message")).toHaveTextContent(
+      /^성민이\(가\) 도착한 결과는 '.+'입니다\.$/,
+    );
+    const ladderImage = screen.getByRole("img", { name: "성민의 경로" });
+    expect(ladderImage).toBeVisible();
+    expect(ladderImage).toHaveAttribute(
+      "viewBox",
+      expect.stringMatching(/^0 -20 \d+ \d+$/),
+    );
   });
 });

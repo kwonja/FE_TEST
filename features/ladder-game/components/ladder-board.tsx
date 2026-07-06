@@ -1,7 +1,7 @@
 "use client";
 
 import { Play } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
@@ -14,6 +14,7 @@ import {
 
 const CELL_SIZE = 72;
 const STEP_DURATION_MS = 240;
+const BOARD_VERTICAL_INSET = 20;
 
 const PLAYER_STYLES = [
   { stroke: "var(--player-1)", foreground: "text-white" },
@@ -96,6 +97,7 @@ export const LadderBoard = ({
   onRouteComplete,
 }: LadderBoardProps) => {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const routeAnimationRef = useRef<SVGElement | null>(null);
   const routePoints = useMemo(
     () =>
       selectedParticipant === null
@@ -105,6 +107,7 @@ export const LadderBoard = ({
   );
   const [isComplete, setIsComplete] = useState(false);
   const boardSize = getBoardSize(ladder);
+  const viewportHeight = boardSize.height + BOARD_VERTICAL_INSET * 2;
   const selectedStyle =
     selectedParticipant === null
       ? null
@@ -120,17 +123,25 @@ export const LadderBoard = ({
   const mobileBoardMinWidth =
     ladder.playerCount > 6 ? ladder.playerCount * 56 : undefined;
 
-  const completeRoute = () => {
-    if (selectedParticipant === null) {
+  useEffect(() => {
+    const routeAnimation = routeAnimationRef.current;
+
+    if (!routeAnimation || selectedParticipant === null) {
       return;
     }
 
-    setIsComplete(true);
-    onRouteComplete(
-      selectedParticipant,
-      getLadderDestination(ladder, selectedParticipant),
-    );
-  };
+    const completeRoute = () => {
+      setIsComplete(true);
+      onRouteComplete(
+        selectedParticipant,
+        getLadderDestination(ladder, selectedParticipant),
+      );
+    };
+
+    routeAnimation.addEventListener("endEvent", completeRoute);
+
+    return () => routeAnimation.removeEventListener("endEvent", completeRoute);
+  }, [ladder, onRouteComplete, selectedParticipant]);
 
   return (
     <div
@@ -192,13 +203,12 @@ export const LadderBoard = ({
             className="relative w-full"
             data-testid="ladder-route-animation"
             style={{
-              aspectRatio: `${boardSize.width} / ${boardSize.height}`,
+              aspectRatio: `${boardSize.width} / ${viewportHeight}`,
             }}
-            onAnimationEnd={completeRoute}
           >
             <svg
               className="absolute inset-0 h-full w-full overflow-visible"
-              viewBox={`0 0 ${boardSize.width} ${boardSize.height}`}
+              viewBox={`0 ${-BOARD_VERTICAL_INSET} ${boardSize.width} ${viewportHeight}`}
               role="img"
               aria-label={
                 selectedParticipant === null
@@ -274,7 +284,6 @@ export const LadderBoard = ({
 
             {fullPath && selectedStyle ? (
               <path
-                className="ladder-route-motion"
                 d={fullPath}
                 data-testid="ladder-route"
                 fill="none"
@@ -285,9 +294,20 @@ export const LadderBoard = ({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="9"
-                style={{ animationDuration: `${routeDuration}ms` }}
                 vectorEffect="non-scaling-stroke"
-              />
+              >
+                <animate
+                  ref={routeAnimationRef}
+                  id="ladder-route-draw-animation"
+                  data-testid="ladder-route-draw"
+                  attributeName="stroke-dashoffset"
+                  from="1"
+                  to="0"
+                  dur={`${routeDuration}ms`}
+                  calcMode="linear"
+                  fill="freeze"
+                />
+              </path>
             ) : null}
 
             {selectedParticipant !== null && fullPath && selectedStyle ? (
@@ -320,7 +340,8 @@ export const LadderBoard = ({
                   data-testid="ladder-token-motion"
                   path={fullPath}
                   dur={`${routeDuration}ms`}
-                  calcMode="linear"
+                  begin="ladder-route-draw-animation.begin"
+                  calcMode="paced"
                   fill="freeze"
                 />
               </g>
