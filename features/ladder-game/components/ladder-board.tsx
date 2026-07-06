@@ -1,7 +1,7 @@
 "use client";
 
 import { Play } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
@@ -97,6 +97,7 @@ export const LadderBoard = ({
   onRouteComplete,
 }: LadderBoardProps) => {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const routeAnimationRef = useRef<SVGElement | null>(null);
   const routePoints = useMemo(
     () =>
       selectedParticipant === null
@@ -122,17 +123,25 @@ export const LadderBoard = ({
   const mobileBoardMinWidth =
     ladder.playerCount > 6 ? ladder.playerCount * 56 : undefined;
 
-  const completeRoute = () => {
-    if (selectedParticipant === null) {
+  useEffect(() => {
+    const routeAnimation = routeAnimationRef.current;
+
+    if (!routeAnimation || selectedParticipant === null) {
       return;
     }
 
-    setIsComplete(true);
-    onRouteComplete(
-      selectedParticipant,
-      getLadderDestination(ladder, selectedParticipant),
-    );
-  };
+    const completeRoute = () => {
+      setIsComplete(true);
+      onRouteComplete(
+        selectedParticipant,
+        getLadderDestination(ladder, selectedParticipant),
+      );
+    };
+
+    routeAnimation.addEventListener("endEvent", completeRoute);
+
+    return () => routeAnimation.removeEventListener("endEvent", completeRoute);
+  }, [ladder, onRouteComplete, selectedParticipant]);
 
   return (
     <div
@@ -196,7 +205,6 @@ export const LadderBoard = ({
             style={{
               aspectRatio: `${boardSize.width} / ${viewportHeight}`,
             }}
-            onAnimationEnd={completeRoute}
           >
             <svg
               className="absolute inset-0 h-full w-full overflow-visible"
@@ -276,7 +284,6 @@ export const LadderBoard = ({
 
             {fullPath && selectedStyle ? (
               <path
-                className="ladder-route-motion"
                 d={fullPath}
                 data-testid="ladder-route"
                 fill="none"
@@ -287,9 +294,20 @@ export const LadderBoard = ({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="9"
-                style={{ animationDuration: `${routeDuration}ms` }}
                 vectorEffect="non-scaling-stroke"
-              />
+              >
+                <animate
+                  ref={routeAnimationRef}
+                  id="ladder-route-draw-animation"
+                  data-testid="ladder-route-draw"
+                  attributeName="stroke-dashoffset"
+                  from="1"
+                  to="0"
+                  dur={`${routeDuration}ms`}
+                  calcMode="linear"
+                  fill="freeze"
+                />
+              </path>
             ) : null}
 
             {selectedParticipant !== null && fullPath && selectedStyle ? (
@@ -322,7 +340,8 @@ export const LadderBoard = ({
                   data-testid="ladder-token-motion"
                   path={fullPath}
                   dur={`${routeDuration}ms`}
-                  calcMode="linear"
+                  begin="ladder-route-draw-animation.begin"
+                  calcMode="paced"
                   fill="freeze"
                 />
               </g>
