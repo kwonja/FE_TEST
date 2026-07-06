@@ -24,7 +24,7 @@ import {
 import { generateLadder } from "../utils/ladder";
 import { LadderBoard } from "./ladder-board";
 
-const DEFAULT_PARTICIPANTS = ["민준", "서연", "지우", "도윤"];
+const DEFAULT_PARTICIPANTS = ["성민", "주현", "민준", "재석"];
 const DEFAULT_RESULTS = ["커피 사기", "간식 당첨", "오늘 면제", "정리 담당"];
 const INITIAL_SEED = 20260702;
 

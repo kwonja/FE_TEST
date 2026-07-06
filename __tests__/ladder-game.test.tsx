@@ -10,7 +10,7 @@ describe("LadderGame", () => {
 
     render(<LadderGame />);
 
-    await screen.findByRole("button", { name: "민준 경로 확인" });
+    await screen.findByRole("button", { name: "성민 경로 확인" });
     await user.click(screen.getByRole("button", { name: "참가자 추가" }));
 
     expect(screen.getAllByTestId("ladder-participant-input")).toHaveLength(5);
@@ -37,11 +37,11 @@ describe("LadderGame", () => {
     render(<LadderGame />);
 
     fireEvent.click(
-      await screen.findByRole("button", { name: "민준 경로 확인" }),
+      await screen.findByRole("button", { name: "성민 경로 확인" }),
     );
 
     expect(screen.getByTestId("ladder-result-message")).toHaveTextContent(
-      "민준이(가) 이동 중입니다.",
+      "성민이(가) 이동 중입니다.",
     );
     expect(screen.getByTestId("ladder-token")).toBeVisible();
 
@@ -53,6 +53,6 @@ describe("LadderGame", () => {
       expect.stringMatching(/^M \d+ \d+(?: L \d+ \d+)+$/),
     );
     expect(route.style.animationDuration).toBe(tokenMotion.getAttribute("dur"));
-    expect(screen.getByRole("img", { name: "민준의 경로" })).toBeVisible();
+    expect(screen.getByRole("img", { name: "성민의 경로" })).toBeVisible();
   });
 });
