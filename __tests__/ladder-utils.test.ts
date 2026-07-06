@@ -14,6 +14,15 @@ describe("사다리 계산", () => {
     );
   });
 
+  it.each([3, 4, 5, 10])(
+    "참가자 %i명에서 인원수의 1.5배 높이를 올림해 생성한다",
+    (playerCount) => {
+      expect(generateLadder(playerCount, 1).levelCount).toBe(
+        Math.ceil(playerCount * 1.5),
+      );
+    },
+  );
+
   it("같은 높이에 서로 맞닿는 가로선을 만들지 않는다", () => {
     const ladder = generateLadder(8, 77);
 
@@ -52,7 +61,7 @@ describe("사다리 계산", () => {
   );
 
   it("가로선이 생성되지 않은 시드에서는 마지막 레벨 이전에 fallback을 만든다", () => {
-    const ladder = generateLadder(3, 10);
+    const ladder = generateLadder(3, 41);
 
     expect(ladder.bridges).toEqual([
       {

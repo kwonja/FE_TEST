@@ -35,7 +35,7 @@ export function generateLadder(playerCount: number, seed: number): Ladder {
   assertPlayerCount(playerCount);
 
   const random = createSeededRandom(seed);
-  const levelCount = playerCount;
+  const levelCount = Math.ceil(playerCount * 1.5);
   const bridges: LadderBridge[] = [];
 
   for (let level = 0; level < levelCount - 1; level += 1) {
