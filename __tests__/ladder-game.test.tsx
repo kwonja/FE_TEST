@@ -53,6 +53,11 @@ describe("LadderGame", () => {
       expect.stringMatching(/^M \d+ \d+(?: L \d+ \d+)+$/),
     );
     expect(route.style.animationDuration).toBe(tokenMotion.getAttribute("dur"));
-    expect(screen.getByRole("img", { name: "성민의 경로" })).toBeVisible();
+    const ladderImage = screen.getByRole("img", { name: "성민의 경로" });
+    expect(ladderImage).toBeVisible();
+    expect(ladderImage).toHaveAttribute(
+      "viewBox",
+      expect.stringMatching(/^0 -20 \d+ \d+$/),
+    );
   });
 });

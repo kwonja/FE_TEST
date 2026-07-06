@@ -14,6 +14,7 @@ import {
 
 const CELL_SIZE = 72;
 const STEP_DURATION_MS = 240;
+const BOARD_VERTICAL_INSET = 20;
 
 const PLAYER_STYLES = [
   { stroke: "var(--player-1)", foreground: "text-white" },
@@ -105,6 +106,7 @@ export const LadderBoard = ({
   );
   const [isComplete, setIsComplete] = useState(false);
   const boardSize = getBoardSize(ladder);
+  const viewportHeight = boardSize.height + BOARD_VERTICAL_INSET * 2;
   const selectedStyle =
     selectedParticipant === null
       ? null
@@ -192,13 +194,13 @@ export const LadderBoard = ({
             className="relative w-full"
             data-testid="ladder-route-animation"
             style={{
-              aspectRatio: `${boardSize.width} / ${boardSize.height}`,
+              aspectRatio: `${boardSize.width} / ${viewportHeight}`,
             }}
             onAnimationEnd={completeRoute}
           >
             <svg
               className="absolute inset-0 h-full w-full overflow-visible"
-              viewBox={`0 0 ${boardSize.width} ${boardSize.height}`}
+              viewBox={`0 ${-BOARD_VERTICAL_INSET} ${boardSize.width} ${viewportHeight}`}
               role="img"
               aria-label={
                 selectedParticipant === null
