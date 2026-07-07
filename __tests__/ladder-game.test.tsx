@@ -56,9 +56,13 @@ describe("LadderGame", () => {
       "dur",
       tokenMotion.getAttribute("dur"),
     );
+    expect(screen.getByTestId("ladder-route-draw")).toHaveAttribute(
+      "begin",
+      tokenMotion.getAttribute("begin"),
+    );
     expect(tokenMotion).toHaveAttribute(
       "begin",
-      "ladder-route-draw-animation.begin",
+      "0s",
     );
     expect(tokenMotion).toHaveAttribute("calcMode", "paced");
     fireEvent(

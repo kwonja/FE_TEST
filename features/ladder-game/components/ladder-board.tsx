@@ -304,6 +304,7 @@ export const LadderBoard = ({
                   from="1"
                   to="0"
                   dur={`${routeDuration}ms`}
+                  begin="0s"
                   calcMode="linear"
                   fill="freeze"
                 />
@@ -340,7 +341,7 @@ export const LadderBoard = ({
                   data-testid="ladder-token-motion"
                   path={fullPath}
                   dur={`${routeDuration}ms`}
-                  begin="ladder-route-draw-animation.begin"
+                  begin="0s"
                   calcMode="paced"
                   fill="freeze"
                 />
