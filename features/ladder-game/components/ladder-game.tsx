@@ -72,6 +72,7 @@ export const LadderGame = () => {
   const [animationRunId, setAnimationRunId] = useState(0);
   const [message, setMessage] = useState("사다리를 섞는 중입니다.");
   const [error, setError] = useState<string | null>(null);
+  const [arrivalMessage, setArrivalMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -127,6 +128,7 @@ export const LadderGame = () => {
     setSelectedParticipant(null);
     setAnimationRunId((current) => current + 1);
     setMessage(`${nextNumber}명 사다리가 바로 반영됐습니다.`);
+    setArrivalMessage(null);
     setError(null);
   };
 
@@ -146,6 +148,7 @@ export const LadderGame = () => {
     setSelectedParticipant(null);
     setAnimationRunId((current) => current + 1);
     setMessage(`${nextParticipants.length}명 사다리가 바로 반영됐습니다.`);
+    setArrivalMessage(null);
     setError(null);
   };
 
@@ -173,6 +176,7 @@ export const LadderGame = () => {
     setSelectedParticipant(null);
     setAnimationRunId((current) => current + 1);
     setMessage("새 사다리가 준비됐어요. 참가자를 선택하세요.");
+    setArrivalMessage(null);
     setError(null);
   };
 
@@ -187,6 +191,7 @@ export const LadderGame = () => {
     setSelectedParticipant(null);
     setAnimationRunId((current) => current + 1);
     setMessage("사다리를 다시 섞었습니다.");
+    setArrivalMessage(null);
   };
 
   const resetGame = () => {
@@ -198,6 +203,7 @@ export const LadderGame = () => {
     setSelectedParticipant(null);
     setAnimationRunId((current) => current + 1);
     setMessage("처음 상태로 돌아왔습니다.");
+    setArrivalMessage(null);
     setError(null);
   };
 
@@ -205,13 +211,15 @@ export const LadderGame = () => {
     setSelectedParticipant(participantIndex);
     setAnimationRunId((current) => current + 1);
     setMessage(`${snapshot.participants[participantIndex]}이(가) 이동 중입니다.`);
+    setArrivalMessage(null);
   };
 
   const completeRoute = useCallback(
     (participantIndex: number, destinationIndex: number) => {
-      setMessage(
-        `${snapshot.participants[participantIndex]}이(가) 도착한 결과는 '${snapshot.results[destinationIndex]}'입니다.`,
-      );
+      const nextArrivalMessage = `${snapshot.participants[participantIndex]}이(가) 도착한 결과는 '${snapshot.results[destinationIndex]}'입니다.`;
+
+      setMessage(nextArrivalMessage);
+      setArrivalMessage(nextArrivalMessage);
     },
     [snapshot.participants, snapshot.results],
   );
@@ -230,7 +238,7 @@ export const LadderGame = () => {
             render={<Link href="/" />}
             nativeButton={false}
             variant="ghost"
-            className="font-bold text-white hover:bg-primary hover:text-primary-foreground"
+            className="game-pressable font-bold text-white hover:bg-primary hover:text-primary-foreground"
             aria-label="게임 목록으로 돌아가기"
           >
             <ArrowLeft aria-hidden="true" />
@@ -256,7 +264,7 @@ export const LadderGame = () => {
           </div>
         </div>
 
-        <div className="grid overflow-hidden rounded-md border border-game-ink/25 bg-white shadow-[0_14px_40px_rgb(40_31_64/0.18)] sm:shadow-[0_24px_80px_rgb(40_31_64/0.22)] xl:grid-cols-[340px_minmax(0,1fr)]">
+        <div className="grid overflow-hidden rounded-md border border-game-ink/20 bg-white shadow-[0_16px_48px_rgb(40_31_64/0.16)] sm:shadow-[0_22px_70px_rgb(40_31_64/0.2)] xl:grid-cols-[340px_minmax(0,1fr)]">
           <aside className="border-b border-white/10 bg-game-ink p-4 text-white sm:p-5 xl:min-h-[720px] xl:border-r xl:border-b-0 xl:border-white/10">
             <div className="mb-5 flex items-center justify-between">
               <div>
@@ -272,7 +280,7 @@ export const LadderGame = () => {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/15 hover:text-white"
+                className="game-icon-pressable text-white hover:bg-white/15 hover:text-white"
                 title="처음 상태로 되돌리기"
                 aria-label="처음 상태로 되돌리기"
                 onClick={resetGame}
@@ -281,7 +289,7 @@ export const LadderGame = () => {
               </Button>
             </div>
 
-            <div className="mb-2 grid grid-cols-[1fr_1fr_32px] gap-2 px-1 text-xs font-bold text-primary">
+            <div className="mb-2 hidden grid-cols-[1fr_1fr_40px] gap-2 px-1 text-xs font-bold text-primary sm:grid">
               <span>참가자</span>
               <span>결과</span>
               <span className="sr-only">삭제</span>
@@ -291,7 +299,7 @@ export const LadderGame = () => {
               {participants.map((participant, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-[1fr_1fr_32px] gap-2"
+                  className="grid grid-cols-[minmax(0,1fr)_40px] gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_40px]"
                 >
                   <Label htmlFor={`participant-${index}`} className="sr-only">
                     참가자 {index + 1}
@@ -301,7 +309,7 @@ export const LadderGame = () => {
                     data-testid="ladder-participant-input"
                     value={participant}
                     maxLength={20}
-                    className="border-white/30 bg-white text-game-ink"
+                    className="col-start-1 row-start-1 h-9 border-white/25 bg-white/95 text-game-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.7)] transition-[border-color,box-shadow,background-color] duration-150 focus-visible:bg-white sm:col-auto sm:row-auto"
                     onChange={(event) =>
                       updateEntry("participant", index, event.target.value)
                     }
@@ -314,7 +322,7 @@ export const LadderGame = () => {
                     data-testid="ladder-result-input"
                     value={results[index]}
                     maxLength={24}
-                    className="border-white/30 bg-white text-game-ink"
+                    className="col-start-1 row-start-2 h-9 border-white/25 bg-white/95 text-game-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.7)] transition-[border-color,box-shadow,background-color] duration-150 focus-visible:bg-white sm:col-auto sm:row-auto"
                     onChange={(event) =>
                       updateEntry("result", index, event.target.value)
                     }
@@ -323,7 +331,7 @@ export const LadderGame = () => {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:bg-white/15 hover:text-white"
+                    className="game-icon-pressable col-start-2 row-span-2 row-start-1 size-10 text-white hover:bg-white/15 hover:text-white sm:col-auto sm:row-auto sm:row-span-1"
                     title={`${participant || `참가자 ${index + 1}`} 삭제`}
                     aria-label={`${participant || `참가자 ${index + 1}`} 삭제`}
                     disabled={participants.length <= MIN_LADDER_PLAYERS}
@@ -338,7 +346,7 @@ export const LadderGame = () => {
             <Button
               type="button"
               variant="outline"
-              className="mt-3 w-full border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white"
+              className="game-pressable mt-3 w-full border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white"
               disabled={participants.length >= MAX_LADDER_PLAYERS}
               onClick={addEntry}
             >
@@ -357,7 +365,7 @@ export const LadderGame = () => {
 
             <Button
               type="button"
-              className="mt-5 h-11 w-full bg-primary text-base font-black text-primary-foreground hover:bg-primary/90"
+              className="game-pressable mt-5 h-11 w-full bg-primary text-base font-black text-primary-foreground shadow-[0_8px_24px_rgb(183_151_245/0.28)] hover:bg-primary/90"
               onClick={startGame}
             >
               <Sparkles aria-hidden="true" />
@@ -382,7 +390,7 @@ export const LadderGame = () => {
               <Button
                 type="button"
                 variant="outline"
-                className="self-start border border-game-ink bg-game-acid font-black text-game-ink hover:bg-game-acid/80 sm:self-auto"
+                className="game-pressable self-start border border-game-ink bg-game-acid font-black text-game-ink shadow-[0_8px_20px_rgb(20_33_31/0.08)] hover:bg-game-acid/80 sm:self-auto"
                 onClick={shuffleLadder}
               >
                 <Shuffle aria-hidden="true" />
@@ -416,14 +424,16 @@ export const LadderGame = () => {
               />
             )}
 
-            <div className="mt-8 grid overflow-hidden rounded-md border border-game-ink bg-game-ink text-white sm:grid-cols-[140px_1fr]">
-              <div className="flex items-center bg-game-acid px-5 py-4 font-mono text-xs font-black tracking-[0.16em] text-game-ink">
-                ARRIVAL
+            {arrivalMessage ? (
+              <div className="mt-8 grid overflow-hidden rounded-md border border-game-ink bg-game-ink text-white shadow-[0_10px_28px_rgb(20_33_31/0.12)] sm:grid-cols-[140px_1fr]">
+                <div className="flex items-center bg-game-acid px-5 py-4 font-mono text-xs font-black tracking-[0.16em] text-game-ink">
+                  ARRIVAL
+                </div>
+                <p className="px-5 py-4 text-base font-black sm:text-lg">
+                  {arrivalMessage}
+                </p>
               </div>
-              <p className="px-5 py-4 text-base font-black sm:text-lg">
-                {message}
-              </p>
-            </div>
+            ) : null}
           </section>
         </div>
       </div>
