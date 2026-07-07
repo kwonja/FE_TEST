@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --breakpoint-sm: 31.3125rem;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
@@ -154,16 +155,6 @@
   }
 }
 
-@keyframes ladder-step-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-.ladder-step-motion {
-  animation: ladder-step-draw 240ms linear forwards;
-}
-
 @keyframes random-draw-shuffle {
   0%,
   100% {
@@ -179,10 +170,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ladder-step-motion {
-    animation-duration: 1ms;
-  }
-
   .random-draw-number--shuffling {
     animation: none;
   }

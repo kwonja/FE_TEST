@@ -10,7 +10,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -24,23 +24,23 @@ import {
 import { generateLadder } from "../utils/ladder";
 import { LadderBoard } from "./ladder-board";
 
-const DEFAULT_PARTICIPANTS = ["민준", "서연", "지우", "도윤"];
+const DEFAULT_PARTICIPANTS = ["성민", "주현", "민준", "재석"];
 const DEFAULT_RESULTS = ["커피 사기", "간식 당첨", "오늘 면제", "정리 담당"];
 const INITIAL_SEED = 20260702;
 
-function createSnapshot(
+const createSnapshot = (
   participants: string[],
   results: string[],
   seed: number,
-): LadderGameSnapshot {
+): LadderGameSnapshot => {
   return {
     participants,
     results,
     ladder: generateLadder(participants.length, seed),
   };
-}
+};
 
-function validateEntries(participants: string[], results: string[]) {
+const validateEntries = (participants: string[], results: string[]) => {
   if (
     participants.some((participant) => participant.trim().length === 0) ||
     results.some((result) => result.trim().length === 0)
@@ -57,9 +57,9 @@ function validateEntries(participants: string[], results: string[]) {
   }
 
   return null;
-}
+};
 
-export function LadderGame() {
+export const LadderGame = () => {
   const [participants, setParticipants] = useState(DEFAULT_PARTICIPANTS);
   const [results, setResults] = useState(DEFAULT_RESULTS);
   const [snapshot, setSnapshot] = useState(() =>
@@ -68,11 +68,22 @@ export function LadderGame() {
   const [selectedParticipant, setSelectedParticipant] = useState<number | null>(
     null,
   );
+  const [isPreparing, setIsPreparing] = useState(true);
   const [animationRunId, setAnimationRunId] = useState(0);
-  const [message, setMessage] = useState(
-    "위쪽 참가자를 선택하면 경로가 시작됩니다.",
-  );
+  const [message, setMessage] = useState("사다리를 섞는 중입니다.");
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setSnapshot(
+        createSnapshot(DEFAULT_PARTICIPANTS, DEFAULT_RESULTS, Date.now()),
+      );
+      setIsPreparing(false);
+      setMessage("위쪽 참가자를 선택하면 경로가 시작됩니다.");
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const updateEntry = (
     type: "participant" | "result",
@@ -228,14 +239,14 @@ export function LadderGame() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-7 sm:py-12">
+      <div className="mx-auto max-w-[1600px] px-4 py-7 sm:px-7 sm:py-12">
         <div className="mb-7 flex items-end justify-between">
           <div>
             <div className="mb-3 flex items-center gap-2 font-mono text-xs font-black tracking-[0.14em]">
               <Sparkles className="size-4" aria-hidden="true" />
               GAME 001 / LADDER
             </div>
-            <h1 className="text-5xl font-black leading-none sm:text-6xl">
+            <h1 className="text-4xl font-black leading-none sm:text-6xl">
               사다리 타기
             </h1>
           </div>
@@ -245,8 +256,8 @@ export function LadderGame() {
           </div>
         </div>
 
-        <div className="grid overflow-hidden rounded-md border border-game-ink/25 bg-white shadow-[0_24px_80px_rgb(40_31_64/0.22)] xl:grid-cols-[340px_minmax(0,1fr)]">
-          <aside className="border-b border-white/10 bg-game-ink p-5 text-white xl:min-h-[720px] xl:border-r xl:border-b-0 xl:border-white/10">
+        <div className="grid overflow-hidden rounded-md border border-game-ink/25 bg-white shadow-[0_14px_40px_rgb(40_31_64/0.18)] sm:shadow-[0_24px_80px_rgb(40_31_64/0.22)] xl:grid-cols-[340px_minmax(0,1fr)]">
+          <aside className="border-b border-white/10 bg-game-ink p-4 text-white sm:p-5 xl:min-h-[720px] xl:border-r xl:border-b-0 xl:border-white/10">
             <div className="mb-5 flex items-center justify-between">
               <div>
                 <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-primary">
@@ -379,15 +390,31 @@ export function LadderGame() {
               </Button>
             </div>
 
-            <LadderBoard
-              key={`${snapshot.ladder.seed}-${animationRunId}`}
-              ladder={snapshot.ladder}
-              participants={snapshot.participants}
-              results={snapshot.results}
-              selectedParticipant={selectedParticipant}
-              onSelectParticipant={selectParticipant}
-              onRouteComplete={completeRoute}
-            />
+            {isPreparing ? (
+              <div
+                className="grid min-h-80 place-items-center border-y border-game-ink/20 bg-game-paper px-5 text-center"
+                data-testid="ladder-preparing"
+                role="status"
+              >
+                <div>
+                  <Shuffle
+                    className="mx-auto mb-3 size-8 animate-spin motion-reduce:animate-none"
+                    aria-hidden="true"
+                  />
+                  <p className="font-black">사다리를 섞는 중입니다.</p>
+                </div>
+              </div>
+            ) : (
+              <LadderBoard
+                key={`${snapshot.ladder.seed}-${animationRunId}`}
+                ladder={snapshot.ladder}
+                participants={snapshot.participants}
+                results={snapshot.results}
+                selectedParticipant={selectedParticipant}
+                onSelectParticipant={selectParticipant}
+                onRouteComplete={completeRoute}
+              />
+            )}
 
             <div className="mt-8 grid overflow-hidden rounded-md border border-game-ink bg-game-ink text-white sm:grid-cols-[140px_1fr]">
               <div className="flex items-center bg-game-acid px-5 py-4 font-mono text-xs font-black tracking-[0.16em] text-game-ink">
@@ -402,4 +429,4 @@ export function LadderGame() {
       </div>
     </main>
   );
-}
+};

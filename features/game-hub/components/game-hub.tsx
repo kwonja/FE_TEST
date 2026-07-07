@@ -114,8 +114,8 @@ function LadderPreview() {
 
 function RandomDrawPreview() {
   return (
-    <div className="grid h-full min-h-72 place-items-center bg-game-acid p-8">
-      <div className="grid size-48 place-items-center rounded-full border-[6px] border-game-ink bg-primary text-8xl font-black shadow-[8px_8px_0_var(--game-coral)]">
+    <div className="grid h-full min-h-64 place-items-center bg-game-acid p-5 sm:min-h-72 sm:p-8">
+      <div className="grid size-40 place-items-center rounded-full border-[6px] border-game-ink bg-primary text-7xl font-black shadow-[5px_5px_0_var(--game-coral)] sm:size-48 sm:text-8xl sm:shadow-[8px_8px_0_var(--game-coral)]">
         ?
       </div>
     </div>
@@ -126,7 +126,7 @@ export function GameHub() {
   return (
     <main className="min-h-screen bg-game-paper text-game-ink">
       <header className="border-b-2 border-game-ink bg-game-ink text-white">
-        <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between px-5 py-3 sm:px-8">
+        <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between px-4 py-3 sm:px-8">
           <Link
             href="/"
             className="flex items-center gap-2 text-xl font-black"
@@ -149,7 +149,7 @@ export function GameHub() {
         className="border-b-2 border-game-ink bg-white"
         aria-labelledby="quick-start-title"
       >
-        <div className="mx-auto max-w-7xl px-5 py-5 sm:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-8">
           <div className="mb-3 flex items-center justify-between">
             <h2
               id="quick-start-title"
@@ -207,13 +207,13 @@ export function GameHub() {
       </section>
 
       <section className="border-b-2 border-game-ink bg-primary">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 sm:py-14 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-9 sm:px-8 sm:py-14 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <div className="mb-4 flex items-center gap-2 text-sm font-black">
               <Sparkles className="size-4" aria-hidden="true" />
               오늘의 플레이그라운드
             </div>
-            <h1 className="max-w-3xl text-5xl font-black leading-none sm:text-6xl">
+            <h1 className="max-w-3xl text-4xl font-black leading-none sm:text-6xl">
               고민은 짧게,
               <br />
               게임은 한판.
@@ -230,7 +230,7 @@ export function GameHub() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14">
+      <section className="mx-auto max-w-7xl px-4 py-9 sm:px-8 sm:py-14">
         <div className="mb-5 flex items-end justify-between border-b-2 border-game-ink pb-3">
           <div>
             <p className="font-mono text-xs font-bold tracking-[0.14em]">
@@ -245,12 +245,12 @@ export function GameHub() {
 
         <Link
           href="/games/ladder"
-          className="group grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[8px_8px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary lg:grid-cols-[1.25fr_0.75fr]"
+          className="group grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[1.25fr_0.75fr]"
         >
           <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
             <LadderPreview />
           </div>
-          <div className="flex min-h-64 flex-col justify-between bg-white p-6 sm:p-8">
+          <div className="flex min-h-64 flex-col justify-between bg-white p-5 sm:p-8">
             <div className="flex items-start justify-between">
               <span className="font-mono text-sm font-black">GAME 001</span>
               <span className="grid size-11 place-items-center rounded-md border-2 border-game-ink bg-game-acid transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">
@@ -270,12 +270,12 @@ export function GameHub() {
 
         <Link
           href="/games/random-draw"
-          className="group mt-10 grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[8px_8px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary lg:grid-cols-[1.25fr_0.75fr]"
+          className="group mt-10 grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[1.25fr_0.75fr]"
         >
           <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
             <RandomDrawPreview />
           </div>
-          <div className="flex min-h-64 flex-col justify-between bg-white p-6 sm:p-8">
+          <div className="flex min-h-64 flex-col justify-between bg-white p-5 sm:p-8">
             <div className="flex items-start justify-between">
               <span className="font-mono text-sm font-black">GAME 002</span>
               <span className="grid size-11 place-items-center rounded-md border-2 border-game-ink bg-game-coral transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">
