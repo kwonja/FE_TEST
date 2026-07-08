@@ -1,10 +1,44 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { LadderGame } from "@/features/ladder-game/components/ladder-game";
 
+const createCanvasContextMock = () => {
+  return {
+    beginPath: vi.fn(),
+    clearRect: vi.fn(),
+    fill: vi.fn(),
+    fillText: vi.fn(),
+    lineTo: vi.fn(),
+    moveTo: vi.fn(),
+    restore: vi.fn(),
+    roundRect: vi.fn(),
+    save: vi.fn(),
+    setLineDash: vi.fn(),
+    stroke: vi.fn(),
+    translate: vi.fn(),
+  };
+};
+
 describe("LadderGame", () => {
+  beforeEach(() => {
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      createCanvasContextMock() as unknown as CanvasRenderingContext2D,
+    );
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      return window.setTimeout(() => callback(performance.now() + 10_000), 0);
+    });
+    vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id) => {
+      window.clearTimeout(id);
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+
   it("참가자를 추가하고 새 사다리를 생성한다", async () => {
     const user = userEvent.setup();
 
@@ -33,46 +67,29 @@ describe("LadderGame", () => {
     ).toBeInTheDocument();
   });
 
-  it("전체 경로를 선과 라벨에 같은 시간으로 적용한다", async () => {
+  it("전체 경로를 캔버스로 그리고 도착 결과를 표시한다", async () => {
     render(<LadderGame />);
 
-    fireEvent.click(
+    await userEvent.click(
       await screen.findByRole("button", { name: "성민 경로 확인" }),
     );
 
-    expect(screen.getByTestId("ladder-result-message")).toHaveTextContent(
-      "성민이(가) 이동 중입니다.",
-    );
-    expect(screen.getByTestId("ladder-token")).toBeVisible();
+    const ladderCanvas = screen.getByTestId("ladder-canvas");
 
-    const route = screen.getByTestId("ladder-route");
-    const tokenMotion = screen.getByTestId("ladder-token-motion");
+    expect(ladderCanvas).toBeVisible();
+    expect(ladderCanvas).toHaveAttribute("width", expect.stringMatching(/\d+/));
+    expect(ladderCanvas).toHaveAttribute(
+      "height",
+      expect.stringMatching(/\d+/),
+    );
 
-    expect(route).toHaveAttribute(
-      "d",
-      expect.stringMatching(/^M \d+ \d+(?: L \d+ \d+)+$/),
-    );
-    expect(screen.getByTestId("ladder-route-draw")).toHaveAttribute(
-      "dur",
-      tokenMotion.getAttribute("dur"),
-    );
-    expect(tokenMotion).toHaveAttribute(
-      "begin",
-      "ladder-route-draw-animation.begin",
-    );
-    expect(tokenMotion).toHaveAttribute("calcMode", "paced");
-    fireEvent(
-      screen.getByTestId("ladder-route-draw"),
-      new Event("endEvent"),
-    );
-    expect(screen.getByTestId("ladder-result-message")).toHaveTextContent(
-      /^성민이\(가\) 도착한 결과는 '.+'입니다\.$/,
-    );
-    const ladderImage = screen.getByRole("img", { name: "성민의 경로" });
-    expect(ladderImage).toBeVisible();
-    expect(ladderImage).toHaveAttribute(
-      "viewBox",
-      expect.stringMatching(/^0 -20 \d+ \d+$/),
+    expect(screen.getByRole("img", { name: "성민의 경로" })).toBeVisible();
+    await waitFor(
+      () =>
+        expect(screen.getByTestId("ladder-result-message")).toHaveTextContent(
+          /^성민이\(가\) 도착한 결과는 '.+'입니다\.$/,
+        ),
+      { timeout: 5000 },
     );
   });
 });
