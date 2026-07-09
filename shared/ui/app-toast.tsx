@@ -2,7 +2,6 @@
 
 import { CheckCircle2, XCircle } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 type AppToastType = "success" | "error";
 
@@ -58,6 +57,7 @@ export const AppToastContainer = () => {
   return (
     <ToastContainer
       position="top-center"
+      className="app-toast-container"
       newestOnTop
       closeOnClick
       pauseOnFocusLoss={false}
