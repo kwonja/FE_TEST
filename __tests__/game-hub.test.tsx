@@ -14,10 +14,14 @@ describe("GameHub", () => {
       screen.getByRole("link", { name: /랜덤 뽑기.*OPEN/ }),
     ).toHaveAttribute("href", "/games/random-draw");
     expect(
+      screen.getByRole("link", { name: /반응속도.*OPEN/ }),
+    ).toHaveAttribute("href", "/games/reaction-speed");
+    expect(
       screen.getByRole("button", { name: /룰렛.*SOON/ }),
     ).toBeDisabled();
-    expect(screen.getAllByRole("button")).toHaveLength(4);
+    expect(screen.getAllByRole("button")).toHaveLength(3);
     expect(screen.getByText("GAME 002")).toBeInTheDocument();
-    expect(screen.getByText("02")).toBeInTheDocument();
+    expect(screen.getByText("GAME 003")).toBeInTheDocument();
+    expect(screen.getByText("03")).toBeInTheDocument();
   });
 });

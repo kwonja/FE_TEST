@@ -6,8 +6,8 @@ import {
   Route,
   Sparkles,
   Ticket,
-  Timer,
   Trophy,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -33,9 +33,9 @@ const quickStartGames = [
     color: "bg-game-acid",
   },
   {
-    title: "타이머",
-    icon: Timer,
-    href: undefined,
+    title: "반응속도",
+    icon: Zap,
+    href: "/games/reaction-speed",
     color: "bg-game-mint",
   },
   {
@@ -117,6 +117,24 @@ function RandomDrawPreview() {
     <div className="grid h-full min-h-64 place-items-center bg-game-acid p-5 sm:min-h-72 sm:p-8">
       <div className="grid size-40 place-items-center rounded-full border-[6px] border-game-ink bg-primary text-7xl font-black shadow-[5px_5px_0_var(--game-coral)] sm:size-48 sm:text-8xl sm:shadow-[8px_8px_0_var(--game-coral)]">
         ?
+      </div>
+    </div>
+  );
+}
+
+function ReactionSpeedPreview() {
+  return (
+    <div className="grid h-full min-h-64 place-items-center bg-game-mint p-5 sm:min-h-72 sm:p-8">
+      <div className="relative grid size-44 place-items-center rounded-md border-[6px] border-game-ink bg-game-ink text-center text-white shadow-[5px_5px_0_var(--game-acid)] sm:size-52 sm:shadow-[8px_8px_0_var(--game-acid)]">
+        <span className="absolute -top-4 -right-4 grid size-14 place-items-center rounded-full border-4 border-game-ink bg-game-coral">
+          <Zap className="size-7" aria-hidden="true" />
+        </span>
+        <span>
+          <span className="block font-mono text-sm font-black text-primary">
+            0.247s
+          </span>
+          <span className="block text-5xl font-black">NOW</span>
+        </span>
       </div>
     </div>
   );
@@ -220,7 +238,7 @@ export function GameHub() {
             </h1>
           </div>
           <div className="flex items-end gap-3 border-l-2 border-game-ink pl-5">
-            <strong className="font-mono text-5xl leading-none">02</strong>
+            <strong className="font-mono text-5xl leading-none">03</strong>
             <span className="pb-1 text-xs font-black leading-4">
               PLAYABLE
               <br />
@@ -288,6 +306,31 @@ export function GameHub() {
               <p className="mt-3 max-w-sm leading-7 text-muted-foreground">
                 버튼 한 번으로 숫자 하나를 뽑으세요. 최근 결과 다섯 개를
                 확인하고 같은 숫자도 다시 만날 수 있습니다.
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          href="/games/reaction-speed"
+          className="group mt-10 grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[1.25fr_0.75fr]"
+        >
+          <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
+            <ReactionSpeedPreview />
+          </div>
+          <div className="flex min-h-64 flex-col justify-between bg-white p-5 sm:p-8">
+            <div className="flex items-start justify-between">
+              <span className="font-mono text-sm font-black">GAME 003</span>
+              <span className="grid size-11 place-items-center rounded-md border-2 border-game-ink bg-game-mint transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">
+                <ArrowUpRight className="size-6" aria-hidden="true" />
+              </span>
+            </div>
+            <div>
+              <Badge className="mb-4 bg-game-coral text-white">ms 측정</Badge>
+              <h3 className="text-4xl font-black">반응속도 게임</h3>
+              <p className="mt-3 max-w-sm leading-7 text-muted-foreground">
+                신호가 뜨는 순간 바로 누르세요. pointerdown 기준으로 반응을
+                재고 최근 기록을 남깁니다.
               </p>
             </div>
           </div>
