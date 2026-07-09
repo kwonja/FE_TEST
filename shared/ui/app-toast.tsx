@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, XCircle } from "lucide-react";
+import { Check, X, XCircle } from "lucide-react";
 import { cssTransition, toast, ToastContainer } from "react-toastify/unstyled";
 
 type AppToastType = "success" | "error";
@@ -12,7 +12,7 @@ type AppToastOptions = {
 
 const TOAST_THEME = {
   success: {
-    icon: CheckCircle2,
+    icon: Check,
     className: "app-toast--success",
   },
   error: {
@@ -37,8 +37,10 @@ const AppToast = ({
 
   return (
     <div className="app-toast">
-      <Icon className="app-toast__icon" aria-hidden="true" />
-      <div className="min-w-0">
+      <span className="app-toast__icon-badge" aria-hidden="true">
+        <Icon className="app-toast__icon" />
+      </span>
+      <div className="app-toast__content">
         <p className="app-toast__title">{title}</p>
         <p className="app-toast__description">{description}</p>
       </div>
@@ -55,9 +57,21 @@ export const showAppToast = (
     bodyClassName: "app-toast-body",
     progressClassName: "app-toast-progress",
     icon: false,
-    closeButton: true,
     autoClose: 2800,
   });
+};
+
+const AppToastCloseButton = ({ closeToast }: { closeToast?: () => void }) => {
+  return (
+    <button
+      type="button"
+      className="app-toast__close"
+      aria-label="토스트 닫기"
+      onClick={closeToast}
+    >
+      <X className="app-toast__close-icon" aria-hidden="true" />
+    </button>
+  );
 };
 
 export const AppToastContainer = () => {
@@ -69,6 +83,7 @@ export const AppToastContainer = () => {
       closeOnClick
       pauseOnFocusLoss={false}
       pauseOnHover
+      closeButton={AppToastCloseButton}
       hideProgressBar={false}
       limit={3}
       draggable={false}
