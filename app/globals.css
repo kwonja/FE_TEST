@@ -216,6 +216,73 @@
   }
 }
 
+.Toastify__progress-bar.app-toast-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform-origin: left;
+}
+
+.Toastify__progress-bar--wrp {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 0.21875rem;
+  overflow: hidden;
+}
+
+.Toastify__progress-bar--bg {
+  display: none;
+}
+
+.Toastify__progress-bar--animated.app-toast-progress {
+  animation: app-toast-progress linear forwards;
+}
+
+.app-toast-enter {
+  animation: app-toast-in 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.app-toast-exit {
+  animation: app-toast-out 140ms ease-in forwards;
+}
+
+@keyframes app-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.875rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes app-toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-0.375rem) scale(0.98);
+  }
+}
+
+@keyframes app-toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
 @keyframes random-draw-shuffle {
   0%,
   100% {
