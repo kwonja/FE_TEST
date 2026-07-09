@@ -15,36 +15,42 @@ import { Badge } from "@/shared/ui/badge";
 
 const quickStartGames = [
   {
+    id: "ladder",
     title: "사다리",
     icon: Route,
     href: "/games/ladder",
     color: "bg-primary",
   },
   {
+    id: "roulette",
     title: "룰렛",
     icon: CircleDot,
     href: undefined,
     color: "bg-game-coral",
   },
   {
+    id: "random-draw",
     title: "랜덤 뽑기",
     icon: Ticket,
     href: "/games/random-draw",
     color: "bg-game-acid",
   },
   {
+    id: "reaction-speed",
     title: "반응속도",
     icon: Zap,
     href: "/games/reaction-speed",
     color: "bg-game-mint",
   },
   {
+    id: "team-maker",
     title: "팀 나누기",
     icon: Grid3X3,
     href: undefined,
     color: "bg-game-sky",
   },
   {
+    id: "score-board",
     title: "스코어",
     icon: Trophy,
     href: undefined,
@@ -52,7 +58,7 @@ const quickStartGames = [
   },
 ] as const;
 
-function LadderPreview() {
+const LadderPreview = () => {
   return (
     <svg
       aria-hidden="true"
@@ -110,9 +116,9 @@ function LadderPreview() {
       ))}
     </svg>
   );
-}
+};
 
-function RandomDrawPreview() {
+const RandomDrawPreview = () => {
   return (
     <div className="grid h-full min-h-64 place-items-center bg-game-acid p-5 sm:min-h-72 sm:p-8">
       <div className="grid size-40 place-items-center rounded-full border-[6px] border-game-ink bg-primary text-7xl font-black shadow-[5px_5px_0_var(--game-coral)] sm:size-48 sm:text-8xl sm:shadow-[8px_8px_0_var(--game-coral)]">
@@ -120,9 +126,9 @@ function RandomDrawPreview() {
       </div>
     </div>
   );
-}
+};
 
-function ReactionSpeedPreview() {
+const ReactionSpeedPreview = () => {
   return (
     <div className="grid h-full min-h-64 place-items-center bg-game-mint p-5 sm:min-h-72 sm:p-8">
       <div className="relative grid size-44 place-items-center rounded-md border-[6px] border-game-ink bg-game-ink text-center text-white shadow-[5px_5px_0_var(--game-acid)] sm:size-52 sm:shadow-[8px_8px_0_var(--game-acid)]">
@@ -138,9 +144,9 @@ function ReactionSpeedPreview() {
       </div>
     </div>
   );
-}
+};
 
-export function GameHub() {
+export const GameHub = () => {
   return (
     <main className="min-h-screen bg-game-paper text-game-ink">
       <header className="border-b-2 border-game-ink bg-game-ink text-white">
@@ -205,6 +211,8 @@ export function GameHub() {
                 <Link
                   key={game.title}
                   href={game.href}
+                  data-game-id={game.id}
+                  data-game-name={game.title}
                   className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-md border border-game-ink bg-game-paper px-2 transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/50"
                 >
                   {content}
@@ -263,6 +271,8 @@ export function GameHub() {
 
         <Link
           href="/games/ladder"
+          data-game-id="ladder"
+          data-game-name="사다리"
           className="group grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[1.25fr_0.75fr]"
         >
           <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
@@ -288,6 +298,8 @@ export function GameHub() {
 
         <Link
           href="/games/random-draw"
+          data-game-id="random-draw"
+          data-game-name="랜덤 뽑기"
           className="group mt-10 grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[1.25fr_0.75fr]"
         >
           <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
@@ -313,6 +325,8 @@ export function GameHub() {
 
         <Link
           href="/games/reaction-speed"
+          data-game-id="reaction-speed"
+          data-game-name="반응속도"
           className="group mt-10 grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[1.25fr_0.75fr]"
         >
           <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
@@ -338,4 +352,4 @@ export function GameHub() {
       </section>
     </main>
   );
-}
+};
