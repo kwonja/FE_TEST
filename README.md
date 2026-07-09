@@ -15,7 +15,9 @@
 - 마지막 level에는 가로 다리를 만들지 않고 결과까지 수직으로 이동
 - `/games/random-draw`: 중복을 허용해 1~100 중 하나를 뽑고 최근 결과 5개를 표시
 - 숫자가 빠르게 바뀌는 셔플 애니메이션과 결과 공개 연출(모션 감소 설정 지원)
-- 게임 허브, 사다리 타기, 랜덤 뽑기는 최소 370px 너비부터 반응형 UI를 지원
+- `/games/reaction-speed`: 신호가 뜬 뒤 `pointerdown` 기준으로 반응속도를 ms 단위 측정
+- 조기 입력 실격, 키보드 입력, 최근 기록 5개 표시를 지원
+- 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도 게임은 최소 370px 너비부터 반응형 UI를 지원
 - 일정 캘린더와 테이블 UI 코드는 `features/schedule`에 보존하며 현재 페이지 라우트에는 연결하지 않음
 - `/api/events`: 일정 조회와 생성을 위한 Route Handler
 - `/api/events/[id]`: 일정 수정과 삭제를 위한 Route Handler
@@ -53,6 +55,10 @@ features/
 │  ├─ components/            # 랜덤 뽑기 화면과 셔플·결과 연출
 │  ├─ model/                 # 숫자 범위, 최근 결과 제한, 진행 상태
 │  └─ utils/                 # 범위 내 무작위 정수 생성
+├─ reaction-speed/
+│  ├─ components/            # 반응속도 게임 화면과 입력 처리
+│  ├─ model/                 # 대기 시간, 최근 기록 제한, 진행 상태
+│  └─ utils/                 # 대기 시간 생성과 ms 표시 변환
 ├─ schedule/
 │  ├─ components/            # 캘린더와 테이블 화면
 │  ├─ hooks/                 # 일정 API 상태 관리
