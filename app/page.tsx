@@ -1,5 +1,12 @@
+import { GameClickTrackingArea } from "@/features/game-analytics/client/game-click-tracking-area";
 import { GameHub } from "@/features/game-hub/components/game-hub";
 
-export default function Home() {
-  return <GameHub />;
-}
+const Home = () => {
+  return (
+    <GameClickTrackingArea>
+      <GameHub />
+    </GameClickTrackingArea>
+  );
+};
+
+export default Home;

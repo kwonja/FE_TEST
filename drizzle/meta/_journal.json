@@ -22,6 +22,13 @@
       "when": 1782880273327,
       "tag": "0002_pale_slipstream",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783584412197,
+      "tag": "0003_public_groot",
+      "breakpoints": true
     }
   ]
 }
