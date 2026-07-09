@@ -262,7 +262,7 @@
   background: var(--app-toast-surface);
 }
 
-.Toastify__toast-body.app-toast-body {
+.Toastify__toast.app-toast-shell .Toastify__toast-body {
   display: flex;
   align-items: flex-start;
   margin: 0;

@@ -54,7 +54,6 @@ export const showAppToast = (
 ) => {
   toast(<AppToast type={type} title={title} description={description} />, {
     className: `app-toast-shell ${TOAST_THEME[type].className}`,
-    bodyClassName: "app-toast-body",
     progressClassName: "app-toast-progress",
     icon: false,
     autoClose: 2800,
