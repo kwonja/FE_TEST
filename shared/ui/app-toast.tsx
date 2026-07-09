@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle2, XCircle } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
+import { cssTransition, toast, ToastContainer } from "react-toastify/unstyled";
 
 type AppToastType = "success" | "error";
 
@@ -20,6 +20,13 @@ const TOAST_THEME = {
     className: "app-toast--error",
   },
 } as const;
+
+const appToastTransition = cssTransition({
+  enter: "app-toast-enter",
+  exit: "app-toast-exit",
+  collapse: true,
+  collapseDuration: 180,
+});
 
 const AppToast = ({
   type,
@@ -64,6 +71,8 @@ export const AppToastContainer = () => {
       pauseOnHover
       hideProgressBar={false}
       limit={3}
+      draggable={false}
+      transition={appToastTransition}
     />
   );
 };
