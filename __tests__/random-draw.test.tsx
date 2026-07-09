@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { toast } from "react-toastify";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { RandomDrawGame } from "@/features/random-draw/components/random-draw-game";
@@ -19,6 +20,7 @@ describe("RandomDrawGame", () => {
   });
 
   afterEach(() => {
+    toast.dismiss();
     vi.useRealTimers();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
@@ -43,6 +45,8 @@ describe("RandomDrawGame", () => {
       "뽑힌 숫자는 50입니다.",
     );
     expect(screen.getByTestId("random-draw-history").children).toHaveLength(1);
+    expect(screen.getByText("뽑기 완료")).toBeInTheDocument();
+    expect(screen.getByText("50번이 뽑혔습니다.")).toBeInTheDocument();
   });
 
   it("서로 다른 6회 결과 중 최근 다섯 개만 최신순으로 유지한다", () => {
@@ -114,5 +118,6 @@ describe("RandomDrawGame", () => {
     expect(screen.getByTestId("random-draw-status")).toHaveTextContent(
       "뽑힌 숫자는 50입니다.",
     );
+    expect(screen.getByText("뽑기 완료")).toBeInTheDocument();
   });
 });

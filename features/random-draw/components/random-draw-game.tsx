@@ -13,19 +13,24 @@ import {
   SHUFFLE_INTERVAL_MS,
 } from "@/features/random-draw/model/random-draw";
 import { drawRandomNumber } from "@/features/random-draw/utils/draw-random-number";
+import { AppToastContainer, showAppToast } from "@/shared/ui/app-toast";
 
-function prefersReducedMotion() {
+const prefersReducedMotion = () => {
+  if (typeof window.matchMedia !== "function") {
+    return false;
+  }
+
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
+};
 
-function clearTimers(timers: number[]) {
+const clearTimers = (timers: number[]) => {
   timers.forEach((timer) => {
     window.clearInterval(timer);
     window.clearTimeout(timer);
   });
-}
+};
 
-export function RandomDrawGame() {
+export const RandomDrawGame = () => {
   const [phase, setPhase] = useState<DrawPhase>("READY");
   const [displayNumber, setDisplayNumber] = useState<number | null>(null);
   const [announcedResult, setAnnouncedResult] = useState("");
@@ -40,13 +45,27 @@ export function RandomDrawGame() {
   );
 
   const completeDraw = () => {
-    const result = drawRandomNumber(DRAW_MIN, DRAW_MAX);
-    setDisplayNumber(result);
-    setRecentResults((current) =>
-      [result, ...current].slice(0, MAX_RECENT_RESULTS),
-    );
-    setPhase("RESULT");
-    setAnnouncedResult(`뽑힌 숫자는 ${result}입니다.`);
+    try {
+      const result = drawRandomNumber(DRAW_MIN, DRAW_MAX);
+
+      setDisplayNumber(result);
+      setRecentResults((current) =>
+        [result, ...current].slice(0, MAX_RECENT_RESULTS),
+      );
+      setPhase("RESULT");
+      setAnnouncedResult(`뽑힌 숫자는 ${result}입니다.`);
+      showAppToast("success", {
+        title: "뽑기 완료",
+        description: `${result}번이 뽑혔습니다.`,
+      });
+    } catch {
+      setPhase("READY");
+      setAnnouncedResult("숫자 뽑기에 실패했습니다.");
+      showAppToast("error", {
+        title: "뽑기 실패",
+        description: "다시 시도해 주세요.",
+      });
+    }
   };
 
   const startDraw = () => {
@@ -77,6 +96,7 @@ export function RandomDrawGame() {
 
   return (
     <main className="min-h-screen bg-game-paper text-game-ink">
+      <AppToastContainer />
       <header className="border-b-2 border-game-ink bg-game-ink text-white">
         <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between px-4 py-3 sm:px-8">
           <Link href="/" className="flex items-center gap-2 text-xl font-black">
@@ -176,4 +196,4 @@ export function RandomDrawGame() {
       </div>
     </main>
   );
-}
+};
