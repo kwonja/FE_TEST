@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { RandomDrawGame } from "@/features/random-draw/components/random-draw-game";
 import { DRAW_DURATION_MS } from "@/features/random-draw/model/random-draw";
+import { RandomDrawPageClient } from "@/app/games/random-draw/random-draw-page-client";
 
 describe("RandomDrawGame", () => {
   beforeEach(() => {
@@ -21,6 +22,7 @@ describe("RandomDrawGame", () => {
 
   afterEach(() => {
     toast.dismiss();
+    window.localStorage.clear();
     vi.useRealTimers();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
@@ -119,5 +121,24 @@ describe("RandomDrawGame", () => {
       "뽑힌 숫자는 50입니다.",
     );
     expect(screen.getByText("뽑기 완료")).toBeInTheDocument();
+  });
+
+  it("두 번 완료하면 별점 평가 모달을 표시한다", () => {
+    vi.mocked(window.matchMedia).mockReturnValue({
+      matches: true,
+    } as MediaQueryList);
+    render(<RandomDrawPageClient />);
+
+    fireEvent.click(screen.getByTestId("random-draw-button"));
+    expect(
+      screen.queryByRole("heading", { name: "랜덤 뽑기, 어땠나요?" }),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("random-draw-button"));
+
+    expect(
+      screen.getByRole("heading", { name: "랜덤 뽑기, 어땠나요?" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "5점" })).toBeInTheDocument();
   });
 });

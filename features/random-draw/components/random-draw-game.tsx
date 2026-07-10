@@ -15,6 +15,10 @@ import {
 import { drawRandomNumber } from "@/features/random-draw/utils/draw-random-number";
 import { AppToastContainer, showAppToast } from "@/shared/ui/app-toast";
 
+type RandomDrawGameProps = {
+  onDrawComplete?: () => void;
+};
+
 const prefersReducedMotion = () => {
   if (typeof window.matchMedia !== "function") {
     return false;
@@ -30,7 +34,7 @@ const clearTimers = (timers: number[]) => {
   });
 };
 
-export const RandomDrawGame = () => {
+export const RandomDrawGame = ({ onDrawComplete }: RandomDrawGameProps) => {
   const [phase, setPhase] = useState<DrawPhase>("READY");
   const [displayNumber, setDisplayNumber] = useState<number | null>(null);
   const [announcedResult, setAnnouncedResult] = useState("");
@@ -58,6 +62,7 @@ export const RandomDrawGame = () => {
         title: "뽑기 완료",
         description: `${result}번이 뽑혔습니다.`,
       });
+      onDrawComplete?.();
     } catch {
       setPhase("READY");
       setAnnouncedResult("숫자 뽑기에 실패했습니다.");
