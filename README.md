@@ -47,7 +47,19 @@
 프로젝트는 Feature-based layered 구조를 사용합니다.
 
 ```text
-app/                         # 라우팅, 레이아웃, API 진입점
+app/                         # App Router 라우팅, 레이아웃, API 진입점
+├─ api/
+│  ├─ analytics/
+│  │  ├─ game-click/         # 게임 선택 클릭 이벤트 저장 API
+│  │  └─ game-feedback/      # 게임 별점 피드백 저장 API
+│  └─ events/                # 일정 조회·생성·수정·삭제 API
+├─ games/
+│  ├─ ladder/                # 사다리 타기 페이지
+│  ├─ random-draw/           # 랜덤 뽑기 페이지와 클라이언트 조합 컴포넌트
+│  └─ reaction-speed/        # 반응속도 게임 페이지
+├─ globals.css               # Tailwind 4, 전역 토큰, 반응형 breakpoint
+├─ layout.tsx                # 루트 레이아웃
+└─ page.tsx                  # 게임 허브 진입 페이지
 features/
 ├─ game-hub/                 # 게임 목록과 허브 화면
 ├─ game-analytics/
@@ -84,7 +96,8 @@ features/
 shared/
 ├─ lib/                      # 도메인을 모르는 공통 유틸리티
 ├─ server/                   # PostgreSQL 연결 등 공통 서버 인프라
-└─ ui/                       # shadcn 공통 UI
+└─ ui/                       # shadcn/base-ui 기반 공통 UI와 앱 토스트
+__tests__/                   # Vitest/RTL 단위·컴포넌트 테스트
 ```
 
 의존성은 다음 방향으로만 흐릅니다.
