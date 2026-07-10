@@ -1,6 +1,7 @@
 import {
   ArrowUpRight,
   CircleDot,
+  Clock3,
   Dices,
   Grid3X3,
   Route,
@@ -41,6 +42,13 @@ const quickStartGames = [
     icon: Zap,
     href: "/games/reaction-speed",
     color: "bg-game-mint",
+  },
+  {
+    id: "seven-seven-timer",
+    title: "7.77 맞추기",
+    icon: Clock3,
+    href: "/games/seven-seven-timer",
+    color: "bg-game-sky",
   },
   {
     id: "team-maker",
@@ -140,6 +148,23 @@ const ReactionSpeedPreview = () => {
             0.247s
           </span>
           <span className="block text-5xl font-black">NOW</span>
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const SevenSevenTimerPreview = () => {
+  return (
+    <div className="grid h-full min-h-64 place-items-center bg-game-sky p-5 sm:min-h-72 sm:p-8">
+      <div className="grid min-h-40 min-w-52 place-items-center rounded-md border-[6px] border-game-ink bg-white px-5 text-center shadow-[5px_5px_0_var(--game-coral)] sm:min-h-48 sm:min-w-64 sm:shadow-[8px_8px_0_var(--game-coral)]">
+        <span>
+          <span className="block font-mono text-xs font-black tracking-[0.18em] text-muted-foreground">
+            TARGET
+          </span>
+          <span className="mt-2 block text-6xl font-black tabular-nums sm:text-7xl">
+            7.77s
+          </span>
         </span>
       </div>
     </div>
@@ -246,7 +271,7 @@ export const GameHub = () => {
             </h1>
           </div>
           <div className="flex items-end gap-3 border-l-2 border-game-ink pl-5">
-            <strong className="font-mono text-5xl leading-none">03</strong>
+            <strong className="font-mono text-5xl leading-none">04</strong>
             <span className="pb-1 text-xs font-black leading-4">
               PLAYABLE
               <br />
@@ -345,6 +370,33 @@ export const GameHub = () => {
               <p className="mt-3 max-w-sm leading-7 text-muted-foreground">
                 신호가 뜨는 순간 바로 누르세요. pointerdown 기준으로 반응을
                 재고 최근 기록을 남깁니다.
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          href="/games/seven-seven-timer"
+          data-game-id="seven-seven-timer"
+          data-game-name="7.77 맞추기"
+          className="group mt-10 grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[1.25fr_0.75fr]"
+        >
+          <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
+            <SevenSevenTimerPreview />
+          </div>
+          <div className="flex min-h-64 flex-col justify-between bg-white p-5 sm:p-8">
+            <div className="flex items-start justify-between">
+              <span className="font-mono text-sm font-black">GAME 004</span>
+              <span className="grid size-11 place-items-center rounded-md border-2 border-game-ink bg-game-sky transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">
+                <ArrowUpRight className="size-6" aria-hidden="true" />
+              </span>
+            </div>
+            <div>
+              <Badge className="mb-4 bg-game-coral text-white">7.77초</Badge>
+              <h3 className="text-4xl font-black">7.77 맞추기</h3>
+              <p className="mt-3 max-w-sm leading-7 text-muted-foreground">
+                시작한 뒤 정확히 7.77초에 멈춰 보세요. 숫자가 state로 갱신되는
+                타이머 게임입니다.
               </p>
             </div>
           </div>
