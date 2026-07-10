@@ -67,6 +67,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## 역할별 서브에이전트 워크플로
 
+새 대화나 새 작업을 시작할 때는 기본적으로 아래 역할별 서브에이전트 워크플로를 먼저 실행한다.
+단순 질문, 설명 요청, 상태 확인처럼 구현이나 변경이 필요 없는 요청은 서브에이전트 실행 없이 바로 응답할 수 있다.
+
 1. `ui-designer`와 `architect`를 병렬 실행한다.
 2. 두 결과를 취합한 후 `frontend`가 구현한다.
 3. 구현 후 `reviewer`가 검토한다.
