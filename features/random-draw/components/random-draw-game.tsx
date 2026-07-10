@@ -15,9 +15,9 @@ import {
 import { drawRandomNumber } from "@/features/random-draw/utils/draw-random-number";
 import { AppToastContainer, showAppToast } from "@/shared/ui/app-toast";
 
-type RandomDrawGameProps = {
+interface RandomDrawGameProps {
   onDrawComplete?: () => void;
-};
+}
 
 const prefersReducedMotion = () => {
   if (typeof window.matchMedia !== "function") {

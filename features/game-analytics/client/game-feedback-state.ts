@@ -4,11 +4,11 @@ const GAME_FEEDBACK_STORAGE_KEY = "gameFeedbackState";
 const PROMPT_AFTER_PLAY_COUNT = 2;
 const DISMISS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
-type GameFeedbackStatus = {
+interface GameFeedbackStatus {
   playCount: number;
   rated: boolean;
   dismissedAt: string | null;
-};
+}
 
 type GameFeedbackState = Record<string, GameFeedbackStatus>;
 

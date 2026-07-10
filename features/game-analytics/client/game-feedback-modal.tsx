@@ -23,13 +23,13 @@ const RATING_LABELS: Record<GameFeedbackRating, string> = {
   5: "최고예요",
 };
 
-type GameFeedbackModalProps = {
+interface GameFeedbackModalProps {
   gameName: string;
   isOpen: boolean;
   isSubmitting: boolean;
   onDismiss: () => void;
   onSubmit: (rating: GameFeedbackRating) => Promise<void>;
-};
+}
 
 export const GameFeedbackModal = ({
   gameName,

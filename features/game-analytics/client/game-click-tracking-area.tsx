@@ -1,10 +1,12 @@
 "use client";
 
-import type { ComponentPropsWithoutRef, MouseEvent } from "react";
+import type { HTMLAttributes, MouseEvent, ReactNode } from "react";
 
 import { trackGameClick } from "./track-game-click";
 
-type GameClickTrackingAreaProps = ComponentPropsWithoutRef<"div">;
+interface GameClickTrackingAreaProps extends HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+}
 
 export const GameClickTrackingArea = ({
   children,

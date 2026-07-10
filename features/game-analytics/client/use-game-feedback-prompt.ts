@@ -10,10 +10,10 @@ import {
 } from "./game-feedback-state";
 import { submitGameFeedback } from "./submit-game-feedback";
 
-type UseGameFeedbackPromptOptions = {
+interface UseGameFeedbackPromptOptions {
   gameId: string;
   gameName: string;
-};
+}
 
 export const useGameFeedbackPrompt = ({
   gameId,
