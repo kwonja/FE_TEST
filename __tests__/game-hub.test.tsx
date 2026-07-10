@@ -17,11 +17,14 @@ describe("GameHub", () => {
       screen.getByRole("link", { name: /반응속도.*OPEN/ }),
     ).toHaveAttribute("href", "/games/reaction-speed");
     expect(
+      screen.getByRole("link", { name: /3.33 맞추기.*OPEN/ }),
+    ).toHaveAttribute("href", "/games/seven-seven-timer");
+    expect(
       screen.getByRole("button", { name: /룰렛.*SOON/ }),
     ).toBeDisabled();
     expect(screen.getAllByRole("button")).toHaveLength(3);
     expect(screen.getByText("GAME 002")).toBeInTheDocument();
     expect(screen.getByText("GAME 003")).toBeInTheDocument();
-    expect(screen.getByText("03")).toBeInTheDocument();
+    expect(screen.getByText("04")).toBeInTheDocument();
   });
 });
