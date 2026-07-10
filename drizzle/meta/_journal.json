@@ -29,6 +29,13 @@
       "when": 1783584412197,
       "tag": "0003_public_groot",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783589180712,
+      "tag": "0004_loose_boom_boom",
+      "breakpoints": true
     }
   ]
 }

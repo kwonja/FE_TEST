@@ -15,12 +15,17 @@
 - 마지막 level에는 가로 다리를 만들지 않고 결과까지 수직으로 이동
 - `/games/random-draw`: 중복을 허용해 1~100 중 하나를 뽑고 최근 결과 5개를 표시
 - 숫자가 빠르게 바뀌는 셔플 애니메이션과 결과 공개 연출(모션 감소 설정 지원)
+- 랜덤 뽑기 완료 2회 후 5점 만점 별점 피드백 모달 표시
 - `/games/reaction-speed`: 신호가 뜬 뒤 `pointerdown` 기준으로 반응속도를 ms 단위 측정
 - 조기 입력 실격, 키보드 입력, 최근 기록 5개 표시를 지원
-- 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도 게임은 최소 370px 너비부터 반응형 UI를 지원
+- `/games/seven-seven-timer`: `3.33초`에 최대한 가깝게 멈추는 스톱워치 게임
+- 경과 초를 React state로 0.01초 단위 갱신하고, `performance.now()` 기준의 실제 시간 차이로 결과 오차를 계산
+- 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도, 3.33 맞추기 게임은 최소 370px 너비부터 반응형 UI를 지원
 - 일정 캘린더와 테이블 UI 코드는 `features/schedule`에 보존하며 현재 페이지 라우트에는 연결하지 않음
 - `/api/events`: 일정 조회와 생성을 위한 Route Handler
 - `/api/events/[id]`: 일정 수정과 삭제를 위한 Route Handler
+- `/api/analytics/game-click`: 게임 선택 클릭 이벤트 저장 Route Handler
+- `/api/analytics/game-feedback`: 게임 별점 피드백 저장 Route Handler
 - 캘린더와 테이블은 동일한 Supabase 데이터를 사용
 
 ## 반응형 정책
@@ -44,9 +49,28 @@
 프로젝트는 Feature-based layered 구조를 사용합니다.
 
 ```text
-app/                         # 라우팅, 레이아웃, API 진입점
+app/                         # App Router 라우팅, 레이아웃, API 진입점
+├─ api/
+│  ├─ analytics/
+│  │  ├─ game-click/         # 게임 선택 클릭 이벤트 저장 API
+│  │  └─ game-feedback/      # 게임 별점 피드백 저장 API
+│  └─ events/                # 일정 조회·생성·수정·삭제 API
+├─ games/
+│  ├─ ladder/                # 사다리 타기 페이지
+│  ├─ random-draw/           # 랜덤 뽑기 페이지와 클라이언트 조합 컴포넌트
+│  ├─ reaction-speed/        # 반응속도 게임 페이지
+│  └─ seven-seven-timer/     # 3.33 맞추기 게임 페이지
+├─ globals.css               # Tailwind 4, 전역 토큰, 반응형 breakpoint
+├─ layout.tsx                # 루트 레이아웃
+└─ page.tsx                  # 게임 허브 진입 페이지
 features/
 ├─ game-hub/                 # 게임 목록과 허브 화면
+├─ game-analytics/
+│  ├─ client/                # 클릭 이벤트 전송, 별점 피드백 모달과 localStorage 노출 상태
+│  ├─ model/                 # 분석 이벤트와 피드백 타입·검증
+│  └─ server/
+│     ├─ schema.ts           # 클릭 이벤트와 별점 피드백 테이블 정의
+│     └─ repositories/       # 분석 데이터 저장
 ├─ ladder-game/
 │  ├─ components/            # 게임 설정과 SVG 사다리 보드
 │  ├─ model/                 # 사다리 타입과 인원 제한
@@ -59,6 +83,10 @@ features/
 │  ├─ components/            # 반응속도 게임 화면과 입력 처리
 │  ├─ model/                 # 대기 시간, 최근 기록 제한, 진행 상태
 │  └─ utils/                 # 대기 시간 생성과 ms 표시 변환
+├─ seven-seven-timer/
+│  ├─ components/            # 3.33 맞추기 게임 화면과 타이머 제어
+│  ├─ model/                 # 목표 시간, 갱신 간격, 진행 상태
+│  └─ utils/                 # 초 표시 변환, 목표 시간 오차와 결과 문구 계산
 ├─ schedule/
 │  ├─ components/            # 캘린더와 테이블 화면
 │  ├─ hooks/                 # 일정 API 상태 관리
@@ -75,7 +103,8 @@ features/
 shared/
 ├─ lib/                      # 도메인을 모르는 공통 유틸리티
 ├─ server/                   # PostgreSQL 연결 등 공통 서버 인프라
-└─ ui/                       # shadcn 공통 UI
+└─ ui/                       # shadcn/base-ui 기반 공통 UI와 앱 토스트
+__tests__/                   # Vitest/RTL 단위·컴포넌트 테스트
 ```
 
 의존성은 다음 방향으로만 흐릅니다.
@@ -112,6 +141,8 @@ npm run dev
 ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열면 게임 허브를 확인할 수 있습니다.
+
+스키마 변경 후에는 `npm run db:generate`로 생성된 SQL을 먼저 확인합니다. 기존 데이터를 보호하기 위해 `DROP`, `DELETE`, `TRUNCATE`가 포함됐는지 확인한 뒤 `npm run db:migrate`로 실제 DB에 반영합니다.
 
 ## 서브에이전트 협업 워크플로
 
