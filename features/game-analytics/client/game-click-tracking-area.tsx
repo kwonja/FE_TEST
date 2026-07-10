@@ -1,16 +1,25 @@
 "use client";
 
-import type { ComponentPropsWithoutRef, MouseEvent } from "react";
+import type { HTMLAttributes, MouseEvent, ReactNode } from "react";
 
 import { trackGameClick } from "./track-game-click";
 
-type GameClickTrackingAreaProps = ComponentPropsWithoutRef<"div">;
+interface GameClickTrackingAreaProps extends HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+}
 
 export const GameClickTrackingArea = ({
   children,
+  onClick,
   ...props
 }: GameClickTrackingAreaProps) => {
-  const handleClick = (event: MouseEvent<HTMLElement>) => {
+  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+    onClick?.(event);
+
+    if (event.defaultPrevented) {
+      return;
+    }
+
     const target = event.target;
 
     if (!(target instanceof HTMLElement)) {
@@ -20,6 +29,10 @@ export const GameClickTrackingArea = ({
     const clickedGameElement = target.closest<HTMLElement>("[data-game-id]");
 
     if (!clickedGameElement) {
+      return;
+    }
+
+    if (!event.currentTarget.contains(clickedGameElement)) {
       return;
     }
 

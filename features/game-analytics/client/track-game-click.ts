@@ -10,13 +10,14 @@ export const trackGameClick = (event: GameClickEventInput) => {
     clickedAt: event.clickedAt ?? new Date().toISOString(),
   });
 
-  if ("sendBeacon" in navigator) {
+  if (typeof navigator.sendBeacon === "function") {
     const blob = new Blob([payload], {
       type: "application/json",
     });
 
-    navigator.sendBeacon(GAME_CLICK_ENDPOINT, blob);
-    return;
+    if (navigator.sendBeacon(GAME_CLICK_ENDPOINT, blob)) {
+      return;
+    }
   }
 
   void fetch(GAME_CLICK_ENDPOINT, {
