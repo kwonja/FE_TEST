@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import {
-  SEVEN_SEVEN_TARGET_SECONDS,
-  SEVEN_SEVEN_TICK_INTERVAL_MS,
+  TIMER_TARGET_SECONDS,
+  TIMER_TICK_INTERVAL_MS,
   type SevenSevenTimerPhase,
 } from "@/features/seven-seven-timer/model/seven-seven-timer";
 import {
@@ -48,7 +48,7 @@ export const SevenSevenTimerGame = () => {
     updateElapsedSeconds();
     timerIdRef.current = window.setInterval(
       updateElapsedSeconds,
-      SEVEN_SEVEN_TICK_INTERVAL_MS,
+      TIMER_TICK_INTERVAL_MS,
     );
 
     return () => {
@@ -108,7 +108,7 @@ export const SevenSevenTimerGame = () => {
             GAME 004 / STOPWATCH
           </p>
           <h1 className="text-4xl font-black leading-none sm:text-6xl">
-            7.77 맞추기
+            3.33 맞추기
           </h1>
         </div>
 
@@ -122,7 +122,7 @@ export const SevenSevenTimerGame = () => {
                 {phase}
               </p>
               <span className="rounded-full border-2 border-game-ink bg-white px-3 py-1 text-xs font-black">
-                목표 {formatTimerSeconds(SEVEN_SEVEN_TARGET_SECONDS)}
+                목표 {formatTimerSeconds(TIMER_TARGET_SECONDS)}
               </span>
             </div>
 
@@ -146,7 +146,7 @@ export const SevenSevenTimerGame = () => {
                 </span>
                 <span className="mt-5 block text-base font-black sm:text-xl">
                   {phase === "RUNNING"
-                    ? "7.77초에 맞춰 여기를 누르세요"
+                    ? "3.33초에 맞춰 여기를 누르세요"
                     : "시작한 뒤 목표 시간에 맞춰 멈추세요"}
                 </span>
               </span>
@@ -178,7 +178,7 @@ export const SevenSevenTimerGame = () => {
               <p className="text-xs font-bold text-white/60">목표 시간</p>
               <p className="mt-1 flex items-center gap-2 text-4xl font-black tabular-nums">
                 <Target className="size-7 text-primary" aria-hidden="true" />
-                7.77s
+                3.33s
               </p>
             </div>
 
@@ -199,7 +199,7 @@ export const SevenSevenTimerGame = () => {
               aria-live="polite"
             >
               {resultSeconds === null
-                ? "시작 버튼을 누르고 7.77초에 맞춰 큰 타이머를 멈춰 보세요."
+                ? "시작 버튼을 누르고 3.33초에 맞춰 큰 타이머를 멈춰 보세요."
                 : getTimerResultMessage(resultSeconds)}
             </p>
           </aside>

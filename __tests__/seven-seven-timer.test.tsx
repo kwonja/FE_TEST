@@ -26,18 +26,18 @@ describe("SevenSevenTimerGame", () => {
     );
   });
 
-  it("7.77초에 멈추면 오차와 결과를 표시한다", () => {
+  it("3.33초에 멈추면 오차와 결과를 표시한다", () => {
     render(<SevenSevenTimerGame />);
 
     fireEvent.click(screen.getByTestId("seven-seven-start-button"));
-    act(() => vi.advanceTimersByTime(7770));
+    act(() => vi.advanceTimersByTime(3330));
     fireEvent.click(screen.getByTestId("seven-seven-stop-button"));
 
     expect(screen.getByTestId("seven-seven-phase")).toHaveTextContent(
       "RESULT",
     );
     expect(screen.getByTestId("seven-seven-display")).toHaveTextContent(
-      "7.77s",
+      "3.33s",
     );
     expect(screen.getByTestId("seven-seven-difference")).toHaveTextContent(
       "0.00s",

@@ -18,9 +18,9 @@
 - 랜덤 뽑기 완료 2회 후 5점 만점 별점 피드백 모달 표시
 - `/games/reaction-speed`: 신호가 뜬 뒤 `pointerdown` 기준으로 반응속도를 ms 단위 측정
 - 조기 입력 실격, 키보드 입력, 최근 기록 5개 표시를 지원
-- `/games/seven-seven-timer`: `7.77초`에 최대한 가깝게 멈추는 스톱워치 게임
+- `/games/seven-seven-timer`: `3.33초`에 최대한 가깝게 멈추는 스톱워치 게임
 - 경과 초를 React state로 0.01초 단위 갱신하고, `performance.now()` 기준의 실제 시간 차이로 결과 오차를 계산
-- 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도, 7.77 맞추기 게임은 최소 370px 너비부터 반응형 UI를 지원
+- 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도, 3.33 맞추기 게임은 최소 370px 너비부터 반응형 UI를 지원
 - 일정 캘린더와 테이블 UI 코드는 `features/schedule`에 보존하며 현재 페이지 라우트에는 연결하지 않음
 - `/api/events`: 일정 조회와 생성을 위한 Route Handler
 - `/api/events/[id]`: 일정 수정과 삭제를 위한 Route Handler
@@ -59,7 +59,7 @@ app/                         # App Router 라우팅, 레이아웃, API 진입점
 │  ├─ ladder/                # 사다리 타기 페이지
 │  ├─ random-draw/           # 랜덤 뽑기 페이지와 클라이언트 조합 컴포넌트
 │  ├─ reaction-speed/        # 반응속도 게임 페이지
-│  └─ seven-seven-timer/     # 7.77 맞추기 게임 페이지
+│  └─ seven-seven-timer/     # 3.33 맞추기 게임 페이지
 ├─ globals.css               # Tailwind 4, 전역 토큰, 반응형 breakpoint
 ├─ layout.tsx                # 루트 레이아웃
 └─ page.tsx                  # 게임 허브 진입 페이지
@@ -84,7 +84,7 @@ features/
 │  ├─ model/                 # 대기 시간, 최근 기록 제한, 진행 상태
 │  └─ utils/                 # 대기 시간 생성과 ms 표시 변환
 ├─ seven-seven-timer/
-│  ├─ components/            # 7.77 맞추기 게임 화면과 타이머 제어
+│  ├─ components/            # 3.33 맞추기 게임 화면과 타이머 제어
 │  ├─ model/                 # 목표 시간, 갱신 간격, 진행 상태
 │  └─ utils/                 # 초 표시 변환, 목표 시간 오차와 결과 문구 계산
 ├─ schedule/

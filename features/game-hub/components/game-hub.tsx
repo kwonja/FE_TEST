@@ -45,7 +45,7 @@ const quickStartGames = [
   },
   {
     id: "seven-seven-timer",
-    title: "7.77 맞추기",
+    title: "3.33 맞추기",
     icon: Clock3,
     href: "/games/seven-seven-timer",
     color: "bg-game-sky",
@@ -163,7 +163,7 @@ const SevenSevenTimerPreview = () => {
             TARGET
           </span>
           <span className="mt-2 block text-6xl font-black tabular-nums sm:text-7xl">
-            7.77s
+            3.33s
           </span>
         </span>
       </div>
@@ -378,7 +378,7 @@ export const GameHub = () => {
         <Link
           href="/games/seven-seven-timer"
           data-game-id="seven-seven-timer"
-          data-game-name="7.77 맞추기"
+          data-game-name="3.33 맞추기"
           className="group mt-10 grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[1.25fr_0.75fr]"
         >
           <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
@@ -392,10 +392,10 @@ export const GameHub = () => {
               </span>
             </div>
             <div>
-              <Badge className="mb-4 bg-game-coral text-white">7.77초</Badge>
-              <h3 className="text-4xl font-black">7.77 맞추기</h3>
+              <Badge className="mb-4 bg-game-coral text-white">3.33초</Badge>
+              <h3 className="text-4xl font-black">3.33 맞추기</h3>
               <p className="mt-3 max-w-sm leading-7 text-muted-foreground">
-                시작한 뒤 정확히 7.77초에 멈춰 보세요. 숫자가 state로 갱신되는
+                시작한 뒤 정확히 3.33초에 멈춰 보세요. 숫자가 state로 갱신되는
                 타이머 게임입니다.
               </p>
             </div>
