@@ -32,11 +32,12 @@ describe("game feedback local state", () => {
     expect(recordGamePlayed("random-draw")).toBe(true);
   });
 
-  it("평가를 완료하면 다시 노출하지 않는다", () => {
+  it("평가를 완료하면 카운트를 초기화하고 두 번 더 플레이한 뒤 다시 노출한다", () => {
     recordGamePlayed("random-draw");
     expect(recordGamePlayed("random-draw")).toBe(true);
     recordGameFeedbackRated("random-draw");
 
     expect(recordGamePlayed("random-draw")).toBe(false);
+    expect(recordGamePlayed("random-draw")).toBe(true);
   });
 });

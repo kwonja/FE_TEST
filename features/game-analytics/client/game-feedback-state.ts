@@ -94,6 +94,7 @@ export const recordGamePlayed = (gameId: string) => {
   const nextStatus = {
     ...currentStatus,
     playCount: currentStatus.playCount + 1,
+    rated: false,
   };
 
   writeGameFeedbackState({
@@ -126,6 +127,7 @@ export const recordGameFeedbackRated = (gameId: string) => {
     [gameId]: {
       ...currentStatus,
       rated: true,
+      playCount: 0,
       dismissedAt: null,
     },
   });
