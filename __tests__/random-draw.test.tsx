@@ -136,6 +136,13 @@ describe("RandomDrawGame", () => {
 
     fireEvent.click(screen.getByTestId("random-draw-button"));
 
+    act(() => vi.advanceTimersByTime(499));
+    expect(
+      screen.queryByRole("heading", { name: "랜덤 뽑기, 어땠나요?" }),
+    ).not.toBeInTheDocument();
+
+    act(() => vi.advanceTimersByTime(1));
+
     expect(
       screen.getByRole("heading", { name: "랜덤 뽑기, 어땠나요?" }),
     ).toBeInTheDocument();
