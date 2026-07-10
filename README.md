@@ -15,12 +15,15 @@
 - 마지막 level에는 가로 다리를 만들지 않고 결과까지 수직으로 이동
 - `/games/random-draw`: 중복을 허용해 1~100 중 하나를 뽑고 최근 결과 5개를 표시
 - 숫자가 빠르게 바뀌는 셔플 애니메이션과 결과 공개 연출(모션 감소 설정 지원)
+- 랜덤 뽑기 완료 2회 후 5점 만점 별점 피드백 모달 표시
 - `/games/reaction-speed`: 신호가 뜬 뒤 `pointerdown` 기준으로 반응속도를 ms 단위 측정
 - 조기 입력 실격, 키보드 입력, 최근 기록 5개 표시를 지원
 - 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도 게임은 최소 370px 너비부터 반응형 UI를 지원
 - 일정 캘린더와 테이블 UI 코드는 `features/schedule`에 보존하며 현재 페이지 라우트에는 연결하지 않음
 - `/api/events`: 일정 조회와 생성을 위한 Route Handler
 - `/api/events/[id]`: 일정 수정과 삭제를 위한 Route Handler
+- `/api/analytics/game-click`: 게임 선택 클릭 이벤트 저장 Route Handler
+- `/api/analytics/game-feedback`: 게임 별점 피드백 저장 Route Handler
 - 캘린더와 테이블은 동일한 Supabase 데이터를 사용
 
 ## 반응형 정책
@@ -47,6 +50,12 @@
 app/                         # 라우팅, 레이아웃, API 진입점
 features/
 ├─ game-hub/                 # 게임 목록과 허브 화면
+├─ game-analytics/
+│  ├─ client/                # 클릭 이벤트 전송, 별점 피드백 모달과 localStorage 노출 상태
+│  ├─ model/                 # 분석 이벤트와 피드백 타입·검증
+│  └─ server/
+│     ├─ schema.ts           # 클릭 이벤트와 별점 피드백 테이블 정의
+│     └─ repositories/       # 분석 데이터 저장
 ├─ ladder-game/
 │  ├─ components/            # 게임 설정과 SVG 사다리 보드
 │  ├─ model/                 # 사다리 타입과 인원 제한
@@ -112,6 +121,8 @@ npm run dev
 ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열면 게임 허브를 확인할 수 있습니다.
+
+스키마 변경 후에는 `npm run db:generate`로 생성된 SQL을 먼저 확인합니다. 기존 데이터를 보호하기 위해 `DROP`, `DELETE`, `TRUNCATE`가 포함됐는지 확인한 뒤 `npm run db:migrate`로 실제 DB에 반영합니다.
 
 ## 서브에이전트 협업 워크플로
 
