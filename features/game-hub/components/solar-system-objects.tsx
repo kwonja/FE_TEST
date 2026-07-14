@@ -2,12 +2,15 @@
 
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
+import { AdditiveBlending, BackSide } from "three";
 import type { Group, Mesh, Points } from "three";
 
 import {
   solarSystemPlanets,
   type SolarSystemPlanet,
 } from "@/features/game-hub/model/solar-system";
+
+import { SolarSurfaceMaterial } from "./solar-surface-material";
 
 type SolarSystemObjectsProps = {
   readonly isAnimationActive: boolean;
@@ -85,16 +88,11 @@ const OrbitalPlanet = ({
 export const SolarSystemObjects = ({
   isAnimationActive,
 }: SolarSystemObjectsProps) => {
-  const sunRef = useRef<Mesh>(null);
   const starsRef = useRef<Points>(null);
 
   useFrame((_, delta) => {
     if (!isAnimationActive) {
       return;
-    }
-
-    if (sunRef.current) {
-      sunRef.current.rotation.y += delta * 0.18;
     }
 
     if (starsRef.current) {
@@ -124,13 +122,31 @@ export const SolarSystemObjects = ({
         />
       </points>
 
-      <mesh ref={sunRef}>
-        <sphereGeometry args={[1.18, 32, 32]} />
-        <meshBasicMaterial color="#ffd166" />
+      <mesh>
+        <sphereGeometry args={[1.1, 48, 48]} />
+        <SolarSurfaceMaterial isAnimationActive={isAnimationActive} />
       </mesh>
-      <mesh scale={1.28}>
-        <sphereGeometry args={[1.18, 32, 32]} />
-        <meshBasicMaterial color="#ff9f1c" opacity={0.13} transparent />
+      <mesh scale={1.36}>
+        <sphereGeometry args={[1.1, 32, 32]} />
+        <meshBasicMaterial
+          blending={AdditiveBlending}
+          color="#ff8b22"
+          depthWrite={false}
+          opacity={0.09}
+          side={BackSide}
+          transparent
+        />
+      </mesh>
+      <mesh scale={1.62}>
+        <sphereGeometry args={[1.1, 32, 32]} />
+        <meshBasicMaterial
+          blending={AdditiveBlending}
+          color="#ff4d22"
+          depthWrite={false}
+          opacity={0.035}
+          side={BackSide}
+          transparent
+        />
       </mesh>
 
       {solarSystemPlanets.map((planet) => (
