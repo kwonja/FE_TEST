@@ -2,8 +2,8 @@
 
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
-import { AdditiveBlending, BackSide } from "three";
-import type { Group, Mesh, Points } from "three";
+import { AdditiveBlending, BackSide, DoubleSide } from "three";
+import type { Group, Points } from "three";
 
 import {
   solarSystemPlanets,
@@ -11,6 +11,7 @@ import {
 } from "@/features/game-hub/model/solar-system";
 
 import { SolarSurfaceMaterial } from "./solar-surface-material";
+import { PlanetSurfaceMaterial } from "./planet-surface-material";
 
 type SolarSystemObjectsProps = {
   readonly isAnimationActive: boolean;
@@ -49,7 +50,7 @@ const OrbitalPlanet = ({
   planet,
 }: OrbitalPlanetProps) => {
   const orbitRef = useRef<Group>(null);
-  const planetRef = useRef<Mesh>(null);
+  const planetRef = useRef<Group>(null);
 
   useFrame((_, delta) => {
     if (!isAnimationActive) {
@@ -75,10 +76,41 @@ const OrbitalPlanet = ({
       </mesh>
       <group rotation={[planet.orbitTilt, 0, 0]}>
         <group ref={orbitRef} rotation={[0, planet.startAngle, 0]}>
-          <mesh ref={planetRef} position={[planet.orbitRadius, 0, 0]}>
-            <sphereGeometry args={[planet.radius, 24, 24]} />
-            <meshStandardMaterial color={planet.color} roughness={0.72} />
-          </mesh>
+          <group ref={planetRef} position={[planet.orbitRadius, 0, 0]}>
+            <mesh>
+              <sphereGeometry args={[planet.radius, 28, 28]} />
+              <PlanetSurfaceMaterial
+                isAnimationActive={isAnimationActive}
+                preset={planet.surfacePreset}
+              />
+            </mesh>
+            {planet.atmosphere ? (
+              <mesh scale={planet.atmosphere.scale}>
+                <sphereGeometry args={[planet.radius, 28, 28]} />
+                <meshBasicMaterial
+                  color={planet.atmosphere.color}
+                  depthWrite={false}
+                  opacity={planet.atmosphere.opacity}
+                  side={BackSide}
+                  transparent
+                />
+              </mesh>
+            ) : null}
+            {planet.rings ? (
+              <mesh rotation={[Math.PI / 2 + planet.rings.tilt, 0, 0]}>
+                <ringGeometry
+                  args={[planet.rings.innerRadius, planet.rings.outerRadius, 64]}
+                />
+                <meshBasicMaterial
+                  color={planet.rings.color}
+                  depthWrite={false}
+                  opacity={planet.rings.opacity}
+                  side={DoubleSide}
+                  transparent
+                />
+              </mesh>
+            ) : null}
+          </group>
         </group>
       </group>
     </>
