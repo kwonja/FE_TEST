@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Geist } from "next/font/google";
+import Script from "next/script";
 import { cn } from "@/shared/lib/utils";
+import { ThemeToggle } from "@/shared/ui/theme-toggle";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
+
+const themeScript = `(() => {
+  try {
+    const storedTheme = localStorage.getItem("hanpan-theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.classList.toggle("dark", storedTheme ? storedTheme === "dark" : prefersDark);
+  } catch {}
+})();`;
 
 export const metadata: Metadata = {
   title: {
@@ -22,8 +32,15 @@ export default function RootLayout({
     <html
       lang="ko"
       className={cn("h-full antialiased", "font-sans", geist.variable)}
+      suppressHydrationWarning
     >
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {children}
+        <ThemeToggle />
+        <Script id="theme-initializer" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
+      </body>
     </html>
   );
 }
