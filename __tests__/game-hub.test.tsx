@@ -7,6 +7,14 @@ describe("GameHub", () => {
   it("활성 게임과 준비 중인 게임 바로가기를 구분한다", () => {
     render(<GameHub />);
 
+    expect(screen.getByTestId("solar-system-background")).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+    expect(
+      screen.getByRole("heading", { name: /고민은 짧게/ }),
+    ).toBeInTheDocument();
+
     expect(
       screen.getByRole("link", { name: /사다리.*OPEN/ }),
     ).toHaveAttribute("href", "/games/ladder");
