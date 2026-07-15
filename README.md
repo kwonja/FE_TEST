@@ -10,6 +10,10 @@
 ## 주요 기능
 
 - `/`: 플레이할 게임을 선택하는 게임 허브
+- 게임 허브 첫 화면에 Three.js와 React Three Fiber 기반의 3D 태양계 배경 제공
+- 셰이더 기반 태양 표면 질감과 흑점, 반투명 코로나 레이어로 태양을 표현
+- 지구형·가스형·암석형·고리형 행성에 절차적 표면 질감과 필요한 대기·고리 레이어를 적용
+- 모션 감소 설정에서는 정적 배경으로 전환하고, 화면 밖이나 비활성 탭에서는 3D 애니메이션을 멈춰 렌더링 부담을 줄임
 - `/games/ladder`: 3~10명이 참여하는 격자 기반 사다리 타기
 - 참가자와 결과 편집, 인원수의 1.5배를 올림한 level 수의 직사각형 사다리 생성, 경로 애니메이션과 결과 공개
 - 마지막 level에는 가로 다리를 만들지 않고 결과까지 수직으로 이동
@@ -39,6 +43,7 @@
 
 - Next.js 16 App Router
 - React 19, TypeScript, Tailwind CSS 4
+- Three.js, React Three Fiber(WebGL 기반 3D 배경)
 - shadcn/ui, TanStack Table
 - Supabase PostgreSQL
 - Drizzle ORM, Drizzle Kit
@@ -64,7 +69,7 @@ app/                         # App Router 라우팅, 레이아웃, API 진입점
 ├─ layout.tsx                # 루트 레이아웃
 └─ page.tsx                  # 게임 허브 진입 페이지
 features/
-├─ game-hub/                 # 게임 목록과 허브 화면
+├─ game-hub/                 # 게임 목록, 허브 화면, 3D 태양계 배경
 ├─ game-analytics/
 │  ├─ client/                # 클릭 이벤트 전송, 별점 피드백 모달과 localStorage 노출 상태
 │  ├─ model/                 # 분석 이벤트와 피드백 타입·검증

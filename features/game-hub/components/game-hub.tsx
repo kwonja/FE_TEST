@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { SolarSystemBackgroundLoader } from "@/features/game-hub/components/solar-system-background-loader";
 import { Badge } from "@/shared/ui/badge";
 
 const quickStartGames = [
@@ -257,20 +258,21 @@ export const GameHub = () => {
         </div>
       </section>
 
-      <section className="border-b-2 border-game-ink bg-primary">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-9 sm:px-8 sm:py-14 lg:grid-cols-[1fr_auto] lg:items-end">
+      <section className="relative isolate overflow-hidden border-b-2 border-game-ink bg-[#0b1024] text-white">
+        <SolarSystemBackgroundLoader />
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-8 px-4 py-9 sm:px-8 sm:py-14 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <div className="mb-4 flex items-center gap-2 text-sm font-black">
+            <div className="mb-4 flex items-center gap-2 text-sm font-black text-game-acid">
               <Sparkles className="size-4" aria-hidden="true" />
               오늘의 플레이그라운드
             </div>
-            <h1 className="max-w-3xl text-4xl font-black leading-none sm:text-6xl">
+            <h1 className="max-w-3xl text-4xl font-black leading-none text-white sm:text-6xl">
               고민은 짧게,
               <br />
               게임은 한판.
             </h1>
           </div>
-          <div className="flex items-end gap-3 border-l-2 border-game-ink pl-5">
+          <div className="flex items-end gap-3 border-l-2 border-white/70 pl-5">
             <strong className="font-mono text-5xl leading-none">04</strong>
             <span className="pb-1 text-xs font-black leading-4">
               PLAYABLE
