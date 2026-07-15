@@ -3,6 +3,10 @@
 import type { GameFeedbackInput } from "../model/game-feedback";
 
 export const submitGameFeedback = async (feedback: GameFeedbackInput) => {
+  if (!navigator.onLine) {
+    return;
+  }
+
   const response = await fetch("/api/analytics/game-feedback", {
     method: "POST",
     headers: {

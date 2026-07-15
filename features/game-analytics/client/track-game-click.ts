@@ -5,6 +5,10 @@ import type { GameClickEventInput } from "../model/game-click-event";
 const GAME_CLICK_ENDPOINT = "/api/analytics/game-click";
 
 export const trackGameClick = (event: GameClickEventInput) => {
+  if (!navigator.onLine) {
+    return;
+  }
+
   const payload = JSON.stringify({
     ...event,
     clickedAt: event.clickedAt ?? new Date().toISOString(),

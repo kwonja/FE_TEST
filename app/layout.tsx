@@ -3,6 +3,8 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import Script from "next/script";
 import { cn } from "@/shared/lib/utils";
+import { NetworkStatusBanner } from "@/shared/ui/network-status-banner";
+import { ServiceWorkerRegister } from "@/shared/ui/service-worker-register";
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
@@ -35,7 +37,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full">
+        <NetworkStatusBanner />
         {children}
+        <ServiceWorkerRegister />
         <ThemeToggle />
         <Script id="theme-initializer" strategy="beforeInteractive">
           {themeScript}
