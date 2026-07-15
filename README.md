@@ -25,6 +25,8 @@
 - `/games/seven-seven-timer`: `3.33초`에 최대한 가깝게 멈추는 스톱워치 게임
 - 경과 초를 React state로 0.01초 단위 갱신하고, `performance.now()` 기준의 실제 시간 차이로 결과 오차를 계산
 - 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도, 3.33 맞추기 게임은 최소 370px 너비부터 반응형 UI를 지원
+- 서비스 워커가 방문한 게임 화면과 정적 리소스를 캐시해, 한 번 온라인으로 연 게임은 오프라인에서도 실행 가능
+- 오프라인 상태에서는 전역 안내 배너를 표시하고 게임 클릭·별점 통계 전송은 생략
 - 일정 캘린더와 테이블 UI 코드는 `features/schedule`에 보존하며 현재 페이지 라우트에는 연결하지 않음
 - `/api/events`: 일정 조회와 생성을 위한 Route Handler
 - `/api/events/[id]`: 일정 수정과 삭제를 위한 Route Handler
@@ -109,6 +111,8 @@ shared/
 ├─ lib/                      # 도메인을 모르는 공통 유틸리티
 ├─ server/                   # PostgreSQL 연결 등 공통 서버 인프라
 └─ ui/                       # shadcn/base-ui 기반 공통 UI와 앱 토스트
+public/
+└─ sw.js                     # 방문한 게임과 정적 파일을 캐시하는 서비스 워커
 __tests__/                   # Vitest/RTL 단위·컴포넌트 테스트
 ```
 
