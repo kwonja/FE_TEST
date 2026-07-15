@@ -8,6 +8,10 @@ const originalSendBeaconDescriptor = Object.getOwnPropertyDescriptor(
   window.navigator,
   "sendBeacon",
 );
+const originalOnlineDescriptor = Object.getOwnPropertyDescriptor(
+  window.navigator,
+  "onLine",
+);
 const sendBeaconMock = vi.fn(() => true);
 
 const restoreSendBeacon = () => {
@@ -23,6 +27,19 @@ const restoreSendBeacon = () => {
   Reflect.deleteProperty(window.navigator, "sendBeacon");
 };
 
+const restoreOnlineStatus = () => {
+  if (originalOnlineDescriptor) {
+    Object.defineProperty(
+      window.navigator,
+      "onLine",
+      originalOnlineDescriptor,
+    );
+    return;
+  }
+
+  Reflect.deleteProperty(window.navigator, "onLine");
+};
+
 describe("GameClickTrackingArea", () => {
   beforeEach(() => {
     window.history.pushState(null, "", "/");
@@ -30,11 +47,16 @@ describe("GameClickTrackingArea", () => {
       configurable: true,
       value: sendBeaconMock,
     });
+    Object.defineProperty(window.navigator, "onLine", {
+      configurable: true,
+      value: true,
+    });
   });
 
   afterEach(() => {
     sendBeaconMock.mockReset();
     restoreSendBeacon();
+    restoreOnlineStatus();
   });
 
   it("게임 요소 안쪽을 클릭하면 sendBeacon으로 클릭 이벤트를 전송한다", async () => {
@@ -121,5 +143,25 @@ describe("GameClickTrackingArea", () => {
 
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(sendBeaconMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("오프라인에서는 게임 클릭 통계를 전송하지 않는다", async () => {
+    const user = userEvent.setup();
+    Object.defineProperty(window.navigator, "onLine", {
+      configurable: true,
+      value: false,
+    });
+
+    render(
+      <GameClickTrackingArea>
+        <button type="button" data-game-id="ladder" data-game-name="사다리">
+          사다리 타기
+        </button>
+      </GameClickTrackingArea>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "사다리 타기" }));
+
+    expect(sendBeaconMock).not.toHaveBeenCalled();
   });
 });
