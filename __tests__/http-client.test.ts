@@ -3,7 +3,6 @@ import axios from "axios";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { httpClient } from "@/shared/api/http-client";
-import { OfflineError } from "@/shared/api/http-error";
 
 const originalOnlineDescriptor = Object.getOwnPropertyDescriptor(
   window.navigator,
@@ -60,13 +59,13 @@ describe("httpClient", () => {
     });
   });
 
-  it("오프라인이면 어댑터 호출 전에 OfflineError로 요청을 중단한다", async () => {
+  it("오프라인 정책을 적용하지 않고 요청을 어댑터에 전달한다", async () => {
     setOnlineStatus(false);
 
-    await expect(httpClient.get("/events")).rejects.toBeInstanceOf(
-      OfflineError,
-    );
-    expect(adapterMock).not.toHaveBeenCalled();
+    await expect(httpClient.get("/events")).resolves.toMatchObject({
+      data: { ok: true },
+    });
+    expect(adapterMock).toHaveBeenCalledOnce();
   });
 
   it("취소된 요청은 Axios 취소 오류를 그대로 유지한다", async () => {

@@ -1,7 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { submitGameFeedback } from "@/features/game-analytics/client/submit-game-feedback";
-import { OfflineError } from "@/shared/api/http-error";
 
 const { postMock } = vi.hoisted(() => ({
   postMock: vi.fn(),
@@ -20,9 +19,35 @@ const feedback = {
   sourcePath: "/games/ladder",
 };
 
+const originalOnlineDescriptor = Object.getOwnPropertyDescriptor(
+  window.navigator,
+  "onLine",
+);
+
+const setOnlineStatus = (online: boolean) => {
+  Object.defineProperty(window.navigator, "onLine", {
+    configurable: true,
+    value: online,
+  });
+};
+
 describe("submitGameFeedback", () => {
   beforeEach(() => {
     postMock.mockReset();
+    setOnlineStatus(true);
+  });
+
+  afterEach(() => {
+    if (originalOnlineDescriptor) {
+      Object.defineProperty(
+        window.navigator,
+        "onLine",
+        originalOnlineDescriptor,
+      );
+      return;
+    }
+
+    Reflect.deleteProperty(window.navigator, "onLine");
   });
 
   it("게임 평가를 공통 HTTP 클라이언트로 전송한다", async () => {
@@ -36,10 +61,11 @@ describe("submitGameFeedback", () => {
     );
   });
 
-  it("오프라인 오류는 사용자 흐름을 방해하지 않고 생략한다", async () => {
-    postMock.mockRejectedValue(new OfflineError());
+  it("오프라인이면 HTTP 요청 없이 평가 전송을 생략한다", async () => {
+    setOnlineStatus(false);
 
     await expect(submitGameFeedback(feedback)).resolves.toBeUndefined();
+    expect(postMock).not.toHaveBeenCalled();
   });
 
   it("HTTP 요청 실패는 기존 기능 오류 메시지로 변환한다", async () => {
