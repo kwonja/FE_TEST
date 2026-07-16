@@ -10,7 +10,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -27,6 +27,26 @@ import { LadderBoard } from "./ladder-board";
 const DEFAULT_PARTICIPANTS = ["성민", "주현", "민준", "재석"];
 const DEFAULT_RESULTS = ["커피 사기", "간식 당첨", "오늘 면제", "정리 담당"];
 const INITIAL_SEED = 20260702;
+
+const requestNotificationPermission = () => {
+
+  console.log("테스트")
+  if (typeof Notification === "undefined" || Notification.permission !== "default") {
+    return;
+  }
+
+  void Notification.requestPermission();
+};
+
+const showGameNotification = (body: string) => {
+
+  console.log("사다리알림")
+  if (typeof Notification === "undefined" || Notification.permission !== "granted") {
+    return;
+  }
+
+  new Notification("사다리 게임 결과", { body });
+};
 
 const createSnapshot = (
   participants: string[],
@@ -73,6 +93,8 @@ export const LadderGame = () => {
   const [message, setMessage] = useState("사다리를 섞는 중입니다.");
   const [error, setError] = useState<string | null>(null);
   const [arrivalMessage, setArrivalMessage] = useState<string | null>(null);
+  const [hasStartedGame, setHasStartedGame] = useState(false);
+  const gameAreaRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -85,6 +107,18 @@ export const LadderGame = () => {
 
     return () => window.clearTimeout(timeoutId);
   }, []);
+
+  useEffect(() => {
+    if (!hasStartedGame || isPreparing) {
+      return;
+    }
+
+    gameAreaRef.current
+      ?.querySelector<HTMLButtonElement>(
+        '[data-testid="ladder-player-select"]',
+      )
+      ?.focus();
+  }, [hasStartedGame, isPreparing]);
 
   const updateEntry = (
     type: "participant" | "result",
@@ -152,7 +186,14 @@ export const LadderGame = () => {
     setError(null);
   };
 
-  const startGame = () => {
+  const enterGame = () => {
+    requestNotificationPermission();
+
+    setHasStartedGame(true);
+  };
+
+  const createNewLadder = () => {
+    console.log("하이")
     const validationError = validateEntries(participants, results);
 
     if (validationError) {
@@ -220,6 +261,7 @@ export const LadderGame = () => {
 
       setMessage(nextArrivalMessage);
       setArrivalMessage(nextArrivalMessage);
+      showGameNotification(nextArrivalMessage);
     },
     [snapshot.participants, snapshot.results],
   );
@@ -366,14 +408,17 @@ export const LadderGame = () => {
             <Button
               type="button"
               className="game-pressable mt-5 h-11 w-full bg-primary text-base font-black text-primary-foreground shadow-[0_8px_24px_rgb(183_151_245/0.28)] hover:bg-primary/90"
-              onClick={startGame}
+              onClick={createNewLadder}
             >
               <Sparkles aria-hidden="true" />
               새 사다리 만들기
             </Button>
           </aside>
 
-          <section className="min-w-0 bg-white p-4 sm:p-7 lg:p-10">
+          <section
+            ref={gameAreaRef}
+            className="min-w-0 bg-white p-4 sm:p-7 lg:p-10"
+          >
             <div className="mb-7 flex flex-col justify-between gap-4 border-b border-game-ink/15 pb-5 sm:flex-row sm:items-center">
               <div>
                 <p className="mb-1 font-mono text-[10px] font-bold tracking-[0.16em] text-muted-foreground">
@@ -398,7 +443,50 @@ export const LadderGame = () => {
               </Button>
             </div>
 
-            {isPreparing ? (
+            {!hasStartedGame ? (
+              <section
+                className="relative grid min-h-80 overflow-hidden border-y border-game-ink/20 bg-game-ink px-5 py-10 text-center text-white sm:min-h-[520px] sm:px-10"
+                data-testid="ladder-start-panel"
+                aria-labelledby="ladder-start-heading"
+              >
+                <div
+                  className="absolute inset-0 bg-[linear-gradient(135deg,rgba(183,151,245,0.3)_1px,transparent_1px),linear-gradient(45deg,rgba(234,255,47,0.16)_1px,transparent_1px)] bg-[size:32px_32px] opacity-70"
+                  aria-hidden="true"
+                />
+                <div className="relative z-10 m-auto max-w-md rounded-md border border-white/20 bg-game-ink/85 p-6 shadow-[0_18px_60px_rgb(0_0_0/0.28)] backdrop-blur-sm sm:p-10">
+                  <p className="font-mono text-xs font-black tracking-[0.18em] text-primary">
+                    READY / SET / GO
+                  </p>
+                  <h2
+                    id="ladder-start-heading"
+                    className="mt-4 text-3xl font-black leading-tight sm:text-5xl"
+                  >
+                    오늘의 운명을 사다리로 정해볼까요?
+                  </h2>
+                  <p
+                    id="ladder-start-description"
+                    className="mt-4 text-sm leading-6 text-white/75 sm:text-base"
+                  >
+                    시작하면 참가자를 선택해 결과까지의 경로를 확인할 수 있어요.
+                  </p>
+                  <Button
+                    type="button"
+                    className="game-pressable mt-7 h-12 w-full bg-game-acid text-base font-black text-game-ink hover:bg-game-acid/80"
+                    aria-describedby="ladder-start-description ladder-notification-description"
+                    onClick={enterGame}
+                  >
+                    <Sparkles aria-hidden="true" />
+                    사다리 게임 시작!
+                  </Button>
+                  <p
+                    id="ladder-notification-description"
+                    className="mt-3 text-xs leading-5 text-white/60"
+                  >
+                    시작 시 Windows 알림 권한을 요청하며, 허용하면 게임 결과를 알려드려요.
+                  </p>
+                </div>
+              </section>
+            ) : isPreparing ? (
               <div
                 className="grid min-h-80 place-items-center border-y border-game-ink/20 bg-game-paper px-5 text-center"
                 data-testid="ladder-preparing"

@@ -29,6 +29,7 @@ export const LadderPlayerSelector = ({
         <Button
           key={`${participant}-${index}`}
           type="button"
+          data-testid="ladder-player-select"
           title={`${participant} 경로 확인`}
           aria-label={`${participant} 경로 확인`}
           onClick={() => onSelectParticipant(index)}
