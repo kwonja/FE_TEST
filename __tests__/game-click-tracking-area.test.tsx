@@ -175,6 +175,7 @@ describe("GameClickTrackingArea", () => {
     await user.click(screen.getByRole("button", { name: "사다리 타기" }));
 
     expect(sendBeaconMock).not.toHaveBeenCalled();
+    expect(httpPostMock).not.toHaveBeenCalled();
   });
 
   it("sendBeacon 실패 시 Axios 요청 실패를 조용히 생략한다", async () => {

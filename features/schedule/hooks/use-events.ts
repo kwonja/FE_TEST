@@ -1,44 +1,20 @@
 "use client";
 
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-import { httpClient } from "@/shared/api/http-client";
-import { isOfflineError } from "@/shared/api/http-error";
-
+import {
+  createEvent,
+  deleteEvent as requestDeleteEvent,
+  getEvents,
+  isEventRequestCanceled,
+  updateEvent,
+} from "../client/events-api";
 import type { CalendarEvent, EventInput } from "../model/events";
 
-type ErrorResponse = {
-  message?: unknown;
-};
-
-const getScheduleErrorMessage = (
-  error: unknown,
-  fallbackMessage: string,
-  offlineMessage: string,
-) => {
-  if (isOfflineError(error)) {
-    return offlineMessage;
-  }
-
-  if (axios.isAxiosError<ErrorResponse>(error)) {
-    const message = error.response?.data?.message;
-
-    if (typeof message === "string" && message.length > 0) {
-      return message;
-    }
-  }
-
-  return fallbackMessage;
-};
-
-const fetchEvents = async (signal?: AbortSignal) => {
-  const response = await httpClient.get<CalendarEvent[]>("/events", {
-    signal,
-  });
-
-  return response.data;
-};
+const getErrorMessage = (error: unknown, fallbackMessage: string) =>
+  error instanceof Error && error.message.length > 0
+    ? error.message
+    : fallbackMessage;
 
 export const useEvents = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -47,20 +23,14 @@ export const useEvents = () => {
 
   const loadEvents = useCallback(async (signal?: AbortSignal) => {
     try {
-      setEvents(await fetchEvents(signal));
+      setEvents(await getEvents(signal));
       setError(null);
     } catch (loadError) {
-      if (axios.isCancel(loadError)) {
+      if (isEventRequestCanceled(loadError)) {
         return;
       }
 
-      setError(
-        getScheduleErrorMessage(
-          loadError,
-          "일정을 불러오지 못했습니다.",
-          "오프라인에서는 일정을 불러올 수 없습니다.",
-        ),
-      );
+      setError(getErrorMessage(loadError, "일정을 불러오지 못했습니다."));
     } finally {
       if (!signal?.aborted) {
         setIsLoading(false);
@@ -70,32 +40,10 @@ export const useEvents = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    void fetchEvents(controller.signal)
-      .then((eventList) => {
-        setEvents(eventList);
-        setError(null);
-      })
-      .catch((loadError: unknown) => {
-        if (axios.isCancel(loadError)) {
-          return;
-        }
-
-        setError(
-          getScheduleErrorMessage(
-            loadError,
-            "일정을 불러오지 못했습니다.",
-            "오프라인에서는 일정을 불러올 수 없습니다.",
-          ),
-        );
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
-      });
+    void Promise.resolve().then(() => loadEvents(controller.signal));
 
     return () => controller.abort();
-  }, []);
+  }, [loadEvents]);
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
@@ -105,22 +53,18 @@ export const useEvents = () => {
   const saveEvent = useCallback(
     async (input: EventInput, id?: number) => {
       try {
-        if (id) {
-          await httpClient.patch(`/events/${id}`, input);
+        if (id !== undefined) {
+          await updateEvent(id, input);
         } else {
-          await httpClient.post("/events", input);
+          await createEvent(input);
         }
       } catch (saveError) {
-        if (axios.isCancel(saveError)) {
+        if (isEventRequestCanceled(saveError)) {
           throw saveError;
         }
 
         throw new Error(
-          getScheduleErrorMessage(
-            saveError,
-            "일정을 저장하지 못했습니다.",
-            "오프라인에서는 일정을 저장할 수 없습니다.",
-          ),
+          getErrorMessage(saveError, "일정을 저장하지 못했습니다."),
         );
       }
 
@@ -132,18 +76,14 @@ export const useEvents = () => {
   const deleteEvent = useCallback(
     async (id: number) => {
       try {
-        await httpClient.delete(`/events/${id}`);
+        await requestDeleteEvent(id);
       } catch (deleteError) {
-        if (axios.isCancel(deleteError)) {
+        if (isEventRequestCanceled(deleteError)) {
           throw deleteError;
         }
 
         throw new Error(
-          getScheduleErrorMessage(
-            deleteError,
-            "일정을 삭제하지 못했습니다.",
-            "오프라인에서는 일정을 삭제할 수 없습니다.",
-          ),
+          getErrorMessage(deleteError, "일정을 삭제하지 못했습니다."),
         );
       }
 

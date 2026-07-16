@@ -1,6 +1,6 @@
 export class OfflineError extends Error {
-  constructor() {
-    super("네트워크 연결을 사용할 수 없습니다.");
+  constructor(message = "네트워크 연결을 사용할 수 없습니다.") {
+    super(message);
     this.name = "OfflineError";
   }
 }
