@@ -1,32 +1,46 @@
 "use client";
 
+import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+
+import { httpClient } from "@/shared/api/http-client";
+import { isOfflineError } from "@/shared/api/http-error";
 
 import type { CalendarEvent, EventInput } from "../model/events";
 
-async function getErrorMessage(response: Response) {
-  try {
-    const body = (await response.json()) as { message?: string };
-    return body.message ?? "요청을 처리하지 못했습니다.";
-  } catch {
-    return "요청을 처리하지 못했습니다.";
-  }
-}
+type ErrorResponse = {
+  message?: unknown;
+};
 
-async function fetchEvents(signal?: AbortSignal) {
-  const response = await fetch("/api/events", {
-    cache: "no-store",
+const getScheduleErrorMessage = (
+  error: unknown,
+  fallbackMessage: string,
+  offlineMessage: string,
+) => {
+  if (isOfflineError(error)) {
+    return offlineMessage;
+  }
+
+  if (axios.isAxiosError<ErrorResponse>(error)) {
+    const message = error.response?.data?.message;
+
+    if (typeof message === "string" && message.length > 0) {
+      return message;
+    }
+  }
+
+  return fallbackMessage;
+};
+
+const fetchEvents = async (signal?: AbortSignal) => {
+  const response = await httpClient.get<CalendarEvent[]>("/events", {
     signal,
   });
 
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
+  return response.data;
+};
 
-  return (await response.json()) as CalendarEvent[];
-}
-
-export function useEvents() {
+export const useEvents = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,14 +50,16 @@ export function useEvents() {
       setEvents(await fetchEvents(signal));
       setError(null);
     } catch (loadError) {
-      if (loadError instanceof DOMException && loadError.name === "AbortError") {
+      if (axios.isCancel(loadError)) {
         return;
       }
 
       setError(
-        loadError instanceof Error
-          ? loadError.message
-          : "일정을 불러오지 못했습니다.",
+        getScheduleErrorMessage(
+          loadError,
+          "일정을 불러오지 못했습니다.",
+          "오프라인에서는 일정을 불러올 수 없습니다.",
+        ),
       );
     } finally {
       if (!signal?.aborted) {
@@ -60,17 +76,16 @@ export function useEvents() {
         setError(null);
       })
       .catch((loadError: unknown) => {
-        if (
-          loadError instanceof DOMException &&
-          loadError.name === "AbortError"
-        ) {
+        if (axios.isCancel(loadError)) {
           return;
         }
 
         setError(
-          loadError instanceof Error
-            ? loadError.message
-            : "일정을 불러오지 못했습니다.",
+          getScheduleErrorMessage(
+            loadError,
+            "일정을 불러오지 못했습니다.",
+            "오프라인에서는 일정을 불러올 수 없습니다.",
+          ),
         );
       })
       .finally(() => {
@@ -89,14 +104,24 @@ export function useEvents() {
 
   const saveEvent = useCallback(
     async (input: EventInput, id?: number) => {
-      const response = await fetch(id ? `/api/events/${id}` : "/api/events", {
-        method: id ? "PATCH" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
-      });
+      try {
+        if (id) {
+          await httpClient.patch(`/events/${id}`, input);
+        } else {
+          await httpClient.post("/events", input);
+        }
+      } catch (saveError) {
+        if (axios.isCancel(saveError)) {
+          throw saveError;
+        }
 
-      if (!response.ok) {
-        throw new Error(await getErrorMessage(response));
+        throw new Error(
+          getScheduleErrorMessage(
+            saveError,
+            "일정을 저장하지 못했습니다.",
+            "오프라인에서는 일정을 저장할 수 없습니다.",
+          ),
+        );
       }
 
       await refresh();
@@ -106,12 +131,20 @@ export function useEvents() {
 
   const deleteEvent = useCallback(
     async (id: number) => {
-      const response = await fetch(`/api/events/${id}`, {
-        method: "DELETE",
-      });
+      try {
+        await httpClient.delete(`/events/${id}`);
+      } catch (deleteError) {
+        if (axios.isCancel(deleteError)) {
+          throw deleteError;
+        }
 
-      if (!response.ok) {
-        throw new Error(await getErrorMessage(response));
+        throw new Error(
+          getScheduleErrorMessage(
+            deleteError,
+            "일정을 삭제하지 못했습니다.",
+            "오프라인에서는 일정을 삭제할 수 없습니다.",
+          ),
+        );
       }
 
       await refresh();
@@ -127,4 +160,4 @@ export function useEvents() {
     saveEvent,
     deleteEvent,
   };
-}
+};
