@@ -93,6 +93,47 @@ describe("LadderGame", () => {
     );
   });
 
+  it("빈 결과가 있으면 오류를 표시하고 시작 패널에 머문다", async () => {
+    const user = userEvent.setup();
+
+    render(<LadderGame />);
+
+    const emptyResultInput = screen.getAllByTestId("ladder-result-input")[0];
+    await user.clear(emptyResultInput);
+    await user.click(
+      screen.getByRole("button", { name: "사다리 게임 시작!" }),
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "참가자와 결과를 모두 입력해 주세요.",
+    );
+    expect(screen.getByTestId("ladder-start-panel")).toBeVisible();
+    expect(emptyResultInput).toHaveFocus();
+    expect(requestPermission).not.toHaveBeenCalled();
+  });
+
+  it("중복 참가자가 있으면 오류를 표시하고 시작 패널에 머문다", async () => {
+    const user = userEvent.setup();
+
+    render(<LadderGame />);
+
+    const duplicateParticipantInput = screen.getAllByTestId(
+      "ladder-participant-input",
+    )[1];
+    await user.clear(duplicateParticipantInput);
+    await user.type(duplicateParticipantInput, "성민");
+    await user.click(
+      screen.getByRole("button", { name: "사다리 게임 시작!" }),
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "참가자 이름은 서로 다르게 입력해 주세요.",
+    );
+    expect(screen.getByTestId("ladder-start-panel")).toBeVisible();
+    expect(duplicateParticipantInput).toHaveFocus();
+    expect(requestPermission).not.toHaveBeenCalled();
+  });
+
   it("새 사다리를 만들 때 알림 권한을 다시 요청하지 않는다", async () => {
     const user = userEvent.setup();
 
