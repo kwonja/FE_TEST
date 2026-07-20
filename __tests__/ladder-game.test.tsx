@@ -72,13 +72,22 @@ describe("LadderGame", () => {
       screen.getByRole("heading", { name: "오늘의 운명을 사다리로 정해볼까요?" }),
     ).toBeVisible();
     expect(
-      screen.getByText("시작 시 Windows 알림 권한을 요청하며, 허용하면 게임 결과를 알려드려요."),
+      screen.getByText("브라우저 알림은 선택 사항이에요. 허용하면 게임 결과를 알려드려요."),
     ).toBeVisible();
+    expect(screen.getByTestId("ladder-result-message")).toHaveTextContent(
+      "참가자와 결과를 확인한 뒤 게임을 시작하세요.",
+    );
+    expect(
+      screen.queryByRole("button", { name: "다시 섞기" }),
+    ).not.toBeInTheDocument();
 
     await startLadderGame(user);
 
     expect(requestPermission).toHaveBeenCalledTimes(1);
     expect(screen.queryByTestId("ladder-start-panel")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "다시 섞기" }),
+    ).toBeVisible();
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "성민 경로 확인" })).toHaveFocus(),
     );
@@ -93,6 +102,19 @@ describe("LadderGame", () => {
     await user.click(screen.getByRole("button", { name: "새 사다리 만들기" }));
 
     expect(requestPermission).toHaveBeenCalledTimes(1);
+  });
+
+  it("참가자 수에 맞춰 시작 화면의 사다리 발판을 다시 배치한다", async () => {
+    const user = userEvent.setup();
+
+    render(<LadderGame />);
+
+    await user.click(screen.getByRole("button", { name: "참가자 추가" }));
+
+    screen.getAllByTestId("ladder-preview-rung").forEach((rung) => {
+      expect(rung).toHaveStyle({ width: "21.5%" });
+      expect(["7%", "28.5%", "50%", "71.5%"]).toContain(rung.style.left);
+    });
   });
 
   it("참가자를 추가하고 새 사다리를 생성한다", async () => {

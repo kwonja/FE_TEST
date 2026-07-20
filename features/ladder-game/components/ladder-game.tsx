@@ -29,8 +29,6 @@ const DEFAULT_RESULTS = ["커피 사기", "간식 당첨", "오늘 면제", "정
 const INITIAL_SEED = 20260702;
 
 const requestNotificationPermission = () => {
-
-  console.log("테스트")
   if (typeof Notification === "undefined" || Notification.permission !== "default") {
     return;
   }
@@ -39,8 +37,6 @@ const requestNotificationPermission = () => {
 };
 
 const showGameNotification = (body: string) => {
-
-  console.log("사다리알림")
   if (typeof Notification === "undefined" || Notification.permission !== "granted") {
     return;
   }
@@ -90,7 +86,9 @@ export const LadderGame = () => {
   );
   const [isPreparing, setIsPreparing] = useState(true);
   const [animationRunId, setAnimationRunId] = useState(0);
-  const [message, setMessage] = useState("사다리를 섞는 중입니다.");
+  const [message, setMessage] = useState(
+    "위쪽 참가자를 선택하면 경로가 시작됩니다.",
+  );
   const [error, setError] = useState<string | null>(null);
   const [arrivalMessage, setArrivalMessage] = useState<string | null>(null);
   const [hasStartedGame, setHasStartedGame] = useState(false);
@@ -102,7 +100,6 @@ export const LadderGame = () => {
         createSnapshot(DEFAULT_PARTICIPANTS, DEFAULT_RESULTS, Date.now()),
       );
       setIsPreparing(false);
-      setMessage("위쪽 참가자를 선택하면 경로가 시작됩니다.");
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
@@ -188,12 +185,15 @@ export const LadderGame = () => {
 
   const enterGame = () => {
     requestNotificationPermission();
-
+    setMessage(
+      isPreparing
+        ? "사다리를 섞는 중입니다."
+        : "위쪽 참가자를 선택하면 경로가 시작됩니다.",
+    );
     setHasStartedGame(true);
   };
 
   const createNewLadder = () => {
-    console.log("하이")
     const validationError = validateEntries(participants, results);
 
     if (validationError) {
@@ -429,43 +429,107 @@ export const LadderGame = () => {
                   aria-live="polite"
                   data-testid="ladder-result-message"
                 >
-                  {message}
+                  {hasStartedGame
+                    ? message
+                    : "참가자와 결과를 확인한 뒤 게임을 시작하세요."}
                 </p>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                className="game-pressable self-start border border-game-ink bg-game-acid font-black text-game-ink shadow-[0_8px_20px_rgb(20_33_31/0.08)] hover:bg-game-acid/80 sm:self-auto"
-                onClick={shuffleLadder}
-              >
-                <Shuffle aria-hidden="true" />
-                다시 섞기
-              </Button>
+              {hasStartedGame ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="game-pressable self-start border border-game-ink bg-game-acid font-black text-game-ink shadow-[0_8px_20px_rgb(20_33_31/0.08)] hover:bg-game-acid/80 sm:self-auto"
+                  onClick={shuffleLadder}
+                >
+                  <Shuffle aria-hidden="true" />
+                  다시 섞기
+                </Button>
+              ) : null}
             </div>
 
             {!hasStartedGame ? (
               <section
-                className="relative grid min-h-80 overflow-hidden border-y border-game-ink/20 bg-game-ink px-5 py-10 text-center text-white sm:min-h-[520px] sm:px-10"
+                className="relative isolate grid min-h-[620px] overflow-hidden border-y border-game-ink/20 bg-game-ink px-5 py-12 text-center text-white sm:px-10"
                 data-testid="ladder-start-panel"
                 aria-labelledby="ladder-start-heading"
               >
                 <div
-                  className="absolute inset-0 bg-[linear-gradient(135deg,rgba(183,151,245,0.3)_1px,transparent_1px),linear-gradient(45deg,rgba(234,255,47,0.16)_1px,transparent_1px)] bg-[size:32px_32px] opacity-70"
+                  className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(183,151,245,0.22),transparent_55%),linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:auto,32px_32px,32px_32px]"
                   aria-hidden="true"
                 />
-                <div className="relative z-10 m-auto max-w-md rounded-md border border-white/20 bg-game-ink/85 p-6 shadow-[0_18px_60px_rgb(0_0_0/0.28)] backdrop-blur-sm sm:p-10">
+                <div
+                  className="absolute inset-x-4 inset-y-8 opacity-35 sm:inset-x-10"
+                  aria-hidden="true"
+                >
+                  <div className="absolute inset-x-0 top-0 flex justify-between gap-2">
+                    {snapshot.participants.map((participant, index) => (
+                      <div
+                        key={`${participant}-${index}`}
+                        className="flex min-w-0 flex-1 flex-col items-center gap-2"
+                      >
+                        <span className="grid size-9 place-items-center rounded-full border border-primary/60 bg-primary/15 font-mono text-xs font-black text-primary sm:size-11">
+                          {index + 1}
+                        </span>
+                        <span className="max-w-full truncate text-[10px] font-bold text-white/60 sm:text-xs">
+                          {participant}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="absolute inset-x-[7%] bottom-16 top-16">
+                    <div className="flex h-full justify-between px-[7%]">
+                      {snapshot.participants.map((participant, index) => (
+                        <span
+                          key={`${participant}-line-${index}`}
+                          className="h-full w-px bg-primary/55"
+                        />
+                      ))}
+                    </div>
+                    {snapshot.ladder.bridges.map((bridge) => {
+                      const columnGap =
+                        86 / (snapshot.ladder.playerCount - 1);
+
+                      return (
+                        <span
+                          key={`${bridge.row}-${bridge.leftColumn}`}
+                          data-testid="ladder-preview-rung"
+                          className="absolute h-px bg-game-acid/60"
+                          style={{
+                            left: `${7 + bridge.leftColumn * columnGap}%`,
+                            top: `${
+                              (bridge.row / snapshot.ladder.rowCount) * 100
+                            }%`,
+                            width: `${columnGap}%`,
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 flex justify-between gap-2">
+                    {snapshot.results.map((result, index) => (
+                      <div
+                        key={`${result}-${index}`}
+                        className="min-w-0 flex-1 rounded-sm border border-game-acid/50 bg-game-acid/10 px-1 py-2 text-[10px] font-bold text-game-acid/70 sm:px-2 sm:text-xs"
+                      >
+                        <span className="block truncate">{result}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(40,31,64,0.62),rgba(40,31,64,0.25)_30%,rgba(40,31,64,0.25)_70%,rgba(40,31,64,0.62))]" aria-hidden="true" />
+                <div className="relative z-10 m-auto w-full max-w-[560px] py-10">
                   <p className="font-mono text-xs font-black tracking-[0.18em] text-primary">
                     READY / SET / GO
                   </p>
                   <h2
                     id="ladder-start-heading"
-                    className="mt-4 text-3xl font-black leading-tight sm:text-5xl"
+                    className="mt-4 text-3xl font-black leading-tight drop-shadow-[0_3px_18px_rgb(40_31_64)] sm:text-5xl"
                   >
                     오늘의 운명을 사다리로 정해볼까요?
                   </h2>
                   <p
                     id="ladder-start-description"
-                    className="mt-4 text-sm leading-6 text-white/75 sm:text-base"
+                    className="mx-auto mt-4 max-w-md text-sm leading-6 text-white/80 sm:text-base"
                   >
                     시작하면 참가자를 선택해 결과까지의 경로를 확인할 수 있어요.
                   </p>
@@ -482,13 +546,13 @@ export const LadderGame = () => {
                     id="ladder-notification-description"
                     className="mt-3 text-xs leading-5 text-white/60"
                   >
-                    시작 시 Windows 알림 권한을 요청하며, 허용하면 게임 결과를 알려드려요.
+                    브라우저 알림은 선택 사항이에요. 허용하면 게임 결과를 알려드려요.
                   </p>
                 </div>
               </section>
             ) : isPreparing ? (
               <div
-                className="grid min-h-80 place-items-center border-y border-game-ink/20 bg-game-paper px-5 text-center"
+                className="grid min-h-[620px] place-items-center border-y border-game-ink/20 bg-game-paper px-5 text-center"
                 data-testid="ladder-preparing"
                 role="status"
               >
@@ -501,15 +565,17 @@ export const LadderGame = () => {
                 </div>
               </div>
             ) : (
-              <LadderBoard
-                key={`${snapshot.ladder.seed}-${animationRunId}`}
-                ladder={snapshot.ladder}
-                participants={snapshot.participants}
-                results={snapshot.results}
-                selectedParticipant={selectedParticipant}
-                onSelectParticipant={selectParticipant}
-                onRouteComplete={completeRoute}
-              />
+              <div className="min-h-[620px]">
+                <LadderBoard
+                  key={`${snapshot.ladder.seed}-${animationRunId}`}
+                  ladder={snapshot.ladder}
+                  participants={snapshot.participants}
+                  results={snapshot.results}
+                  selectedParticipant={selectedParticipant}
+                  onSelectParticipant={selectParticipant}
+                  onRouteComplete={completeRoute}
+                />
+              </div>
             )}
 
             {arrivalMessage ? (
