@@ -184,6 +184,46 @@ export const LadderGame = () => {
   };
 
   const enterGame = () => {
+    const validationError = validateEntries(participants, results);
+
+    if (validationError) {
+      setError(validationError);
+
+      for (let index = 0; index < participants.length; index += 1) {
+        if (participants[index].trim().length === 0) {
+          document.getElementById(`participant-${index}`)?.focus();
+          return;
+        }
+
+        if (results[index].trim().length === 0) {
+          document.getElementById(`result-${index}`)?.focus();
+          return;
+        }
+      }
+
+      const normalizedParticipants = participants.map((participant) =>
+        participant.trim(),
+      );
+      const duplicateParticipantIndex = normalizedParticipants.findIndex(
+        (participant, index) =>
+          normalizedParticipants.indexOf(participant) !== index,
+      );
+
+      document
+        .getElementById(`participant-${duplicateParticipantIndex}`)
+        ?.focus();
+      return;
+    }
+
+    const cleanParticipants = participants.map((participant) =>
+      participant.trim(),
+    );
+    const cleanResults = results.map((result) => result.trim());
+
+    setParticipants(cleanParticipants);
+    setResults(cleanResults);
+    setSnapshot(createSnapshot(cleanParticipants, cleanResults, Date.now()));
+    setError(null);
     requestNotificationPermission();
     setMessage(
       isPreparing
