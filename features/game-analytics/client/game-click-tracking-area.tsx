@@ -16,10 +16,6 @@ export const GameClickTrackingArea = ({
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     onClick?.(event);
 
-    if (event.defaultPrevented) {
-      return;
-    }
-
     const target = event.target;
 
     if (!(target instanceof HTMLElement)) {
