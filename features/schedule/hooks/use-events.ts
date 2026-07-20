@@ -2,49 +2,35 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import {
+  createEvent,
+  deleteEvent as requestDeleteEvent,
+  getEvents,
+  isEventRequestCanceled,
+  updateEvent,
+} from "../client/events-api";
 import type { CalendarEvent, EventInput } from "../model/events";
 
-async function getErrorMessage(response: Response) {
-  try {
-    const body = (await response.json()) as { message?: string };
-    return body.message ?? "요청을 처리하지 못했습니다.";
-  } catch {
-    return "요청을 처리하지 못했습니다.";
-  }
-}
+const getErrorMessage = (error: unknown, fallbackMessage: string) =>
+  error instanceof Error && error.message.length > 0
+    ? error.message
+    : fallbackMessage;
 
-async function fetchEvents(signal?: AbortSignal) {
-  const response = await fetch("/api/events", {
-    cache: "no-store",
-    signal,
-  });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  return (await response.json()) as CalendarEvent[];
-}
-
-export function useEvents() {
+export const useEvents = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const loadEvents = useCallback(async (signal?: AbortSignal) => {
     try {
-      setEvents(await fetchEvents(signal));
+      setEvents(await getEvents(signal));
       setError(null);
     } catch (loadError) {
-      if (loadError instanceof DOMException && loadError.name === "AbortError") {
+      if (isEventRequestCanceled(loadError)) {
         return;
       }
 
-      setError(
-        loadError instanceof Error
-          ? loadError.message
-          : "일정을 불러오지 못했습니다.",
-      );
+      setError(getErrorMessage(loadError, "일정을 불러오지 못했습니다."));
     } finally {
       if (!signal?.aborted) {
         setIsLoading(false);
@@ -54,33 +40,10 @@ export function useEvents() {
 
   useEffect(() => {
     const controller = new AbortController();
-    void fetchEvents(controller.signal)
-      .then((eventList) => {
-        setEvents(eventList);
-        setError(null);
-      })
-      .catch((loadError: unknown) => {
-        if (
-          loadError instanceof DOMException &&
-          loadError.name === "AbortError"
-        ) {
-          return;
-        }
-
-        setError(
-          loadError instanceof Error
-            ? loadError.message
-            : "일정을 불러오지 못했습니다.",
-        );
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
-      });
+    void Promise.resolve().then(() => loadEvents(controller.signal));
 
     return () => controller.abort();
-  }, []);
+  }, [loadEvents]);
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
@@ -89,14 +52,20 @@ export function useEvents() {
 
   const saveEvent = useCallback(
     async (input: EventInput, id?: number) => {
-      const response = await fetch(id ? `/api/events/${id}` : "/api/events", {
-        method: id ? "PATCH" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
-      });
+      try {
+        if (id !== undefined) {
+          await updateEvent(id, input);
+        } else {
+          await createEvent(input);
+        }
+      } catch (saveError) {
+        if (isEventRequestCanceled(saveError)) {
+          throw saveError;
+        }
 
-      if (!response.ok) {
-        throw new Error(await getErrorMessage(response));
+        throw new Error(
+          getErrorMessage(saveError, "일정을 저장하지 못했습니다."),
+        );
       }
 
       await refresh();
@@ -106,12 +75,16 @@ export function useEvents() {
 
   const deleteEvent = useCallback(
     async (id: number) => {
-      const response = await fetch(`/api/events/${id}`, {
-        method: "DELETE",
-      });
+      try {
+        await requestDeleteEvent(id);
+      } catch (deleteError) {
+        if (isEventRequestCanceled(deleteError)) {
+          throw deleteError;
+        }
 
-      if (!response.ok) {
-        throw new Error(await getErrorMessage(response));
+        throw new Error(
+          getErrorMessage(deleteError, "일정을 삭제하지 못했습니다."),
+        );
       }
 
       await refresh();
@@ -127,4 +100,4 @@ export function useEvents() {
     saveEvent,
     deleteEvent,
   };
-}
+};

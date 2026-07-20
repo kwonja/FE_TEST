@@ -15,7 +15,9 @@
 - 지구형·가스형·암석형·고리형 행성에 절차적 표면 질감과 필요한 대기·고리 레이어를 적용
 - 모션 감소 설정에서는 정적 배경으로 전환하고, 화면 밖이나 비활성 탭에서는 3D 애니메이션을 멈춰 렌더링 부담을 줄임
 - `/games/ladder`: 3~10명이 참여하는 격자 기반 사다리 타기
-- 참가자와 결과 편집, 인원수의 1.5배를 올림한 level 수의 직사각형 사다리 생성, 경로 애니메이션과 결과 공개
+- 시작 화면에서 참가자와 결과를 편집하며, 빈 입력과 중복 참가자 이름을 검증한 뒤 게임 화면으로 진입
+- 게임 시작 시 브라우저 알림 권한을 선택적으로 요청하며, 허용한 경우에만 경로 도착 결과를 브라우저 알림으로 제공
+- 인원수의 1.5배를 올림한 level 수의 직사각형 사다리 생성, 경로 애니메이션과 결과 공개
 - 마지막 level에는 가로 다리를 만들지 않고 결과까지 수직으로 이동
 - `/games/random-draw`: 중복을 허용해 1~100 중 하나를 뽑고 최근 결과 5개를 표시
 - 숫자가 빠르게 바뀌는 셔플 애니메이션과 결과 공개 연출(모션 감소 설정 지원)
@@ -25,6 +27,12 @@
 - `/games/seven-seven-timer`: `3.33초`에 최대한 가깝게 멈추는 스톱워치 게임
 - 경과 초를 React state로 0.01초 단위 갱신하고, `performance.now()` 기준의 실제 시간 차이로 결과 오차를 계산
 - 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도, 3.33 맞추기 게임은 최소 370px 너비부터 반응형 UI를 지원
+- 프로덕션 서비스 워커가 게임 허브·게임 화면·`/offline` 폴백을 미리 캐시하고, 같은 출처의 화면과 정적 리소스를 런타임에 캐시해 오프라인 실행 지원
+- 오프라인에서는 상태 배너를 표시하며, 캐시되지 않은 화면으로 이동하면 `/offline` 안내 화면을 제공
+- Axios 공통 `httpClient`는 API 기본 경로와 타임아웃만 관리하고, `shared/api/network`의 `isOnline`·`assertOnline`으로 기능별 오프라인 정책을 명시
+- 일정 API는 `features/schedule/client/events-api`에서 작업별 `OfflineError`와 Axios 오류를 정규화하고, 게임 클릭·별점 통계는 오프라인이면 전송을 조용히 생략
+- 일정 Hook은 API 구현과 오류 정규화를 분리하고 로딩·오류·목록 등 UI 상태만 관리
+- 서비스 워커의 방문 화면·정적 리소스 캐시는 API 통신과 독립적으로 유지
 - 일정 캘린더와 테이블 UI 코드는 `features/schedule`에 보존하며 현재 페이지 라우트에는 연결하지 않음
 - `/api/events`: 일정 조회와 생성을 위한 Route Handler
 - `/api/events/[id]`: 일정 수정과 삭제를 위한 Route Handler
@@ -45,6 +53,7 @@
 - React 19, TypeScript, Tailwind CSS 4
 - Three.js, React Three Fiber(WebGL 기반 3D 배경)
 - shadcn/ui, TanStack Table
+- Axios
 - Supabase PostgreSQL
 - Drizzle ORM, Drizzle Kit
 - Vitest, React Testing Library
@@ -65,6 +74,7 @@ app/                         # App Router 라우팅, 레이아웃, API 진입점
 │  ├─ random-draw/           # 랜덤 뽑기 페이지와 클라이언트 조합 컴포넌트
 │  ├─ reaction-speed/        # 반응속도 게임 페이지
 │  └─ seven-seven-timer/     # 3.33 맞추기 게임 페이지
+├─ offline/                  # 캐시되지 않은 화면의 오프라인 폴백
 ├─ globals.css               # Tailwind 4, 전역 토큰, 반응형 breakpoint
 ├─ layout.tsx                # 루트 레이아웃
 └─ page.tsx                  # 게임 허브 진입 페이지
@@ -93,8 +103,9 @@ features/
 │  ├─ model/                 # 목표 시간, 갱신 간격, 진행 상태
 │  └─ utils/                 # 초 표시 변환, 목표 시간 오차와 결과 문구 계산
 ├─ schedule/
+│  ├─ client/                # 일정 API 요청, 작업별 오프라인 정책과 Axios 오류 정규화
 │  ├─ components/            # 캘린더와 테이블 화면
-│  ├─ hooks/                 # 일정 API 상태 관리
+│  ├─ hooks/                 # 일정 로딩·오류·목록 등 UI 상태 관리
 │  ├─ model/                 # 일정 타입, 상수, 검증
 │  └─ server/
 │     ├─ schema.ts           # Drizzle 일정 테이블 정의
@@ -106,9 +117,12 @@ features/
 ├─ practice-inputs/          # 입력 연습 기능
 └─ todo/                     # Todo 연습 기능과 스키마
 shared/
+├─ api/                      # Axios 기본 설정, OfflineError와 공통 네트워크 가드
 ├─ lib/                      # 도메인을 모르는 공통 유틸리티
 ├─ server/                   # PostgreSQL 연결 등 공통 서버 인프라
 └─ ui/                       # shadcn/base-ui 기반 공통 UI와 앱 토스트
+public/
+└─ sw.js                     # 방문한 게임과 정적 파일을 캐시하는 서비스 워커
 __tests__/                   # Vitest/RTL 단위·컴포넌트 테스트
 ```
 
