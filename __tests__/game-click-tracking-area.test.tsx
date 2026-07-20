@@ -157,6 +157,47 @@ describe("GameClickTrackingArea", () => {
     expect(sendBeaconMock).toHaveBeenCalledTimes(1);
   });
 
+  it("preventDefault된 게임 클릭도 한 번 추적한다", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <GameClickTrackingArea onClick={(event) => event.preventDefault()}>
+        <button
+          type="button"
+          data-game-id="ladder"
+          data-game-name="사다리"
+        >
+          사다리 타기
+        </button>
+      </GameClickTrackingArea>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "사다리 타기" }));
+
+    expect(sendBeaconMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("자식 게임 버튼이 preventDefault해도 한 번 추적한다", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <GameClickTrackingArea>
+        <button
+          type="button"
+          data-game-id="ladder"
+          data-game-name="사다리"
+          onClick={(event) => event.preventDefault()}
+        >
+          사다리 타기
+        </button>
+      </GameClickTrackingArea>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "사다리 타기" }));
+
+    expect(sendBeaconMock).toHaveBeenCalledTimes(1);
+  });
+
   it("오프라인에서는 게임 클릭 통계를 전송하지 않는다", async () => {
     const user = userEvent.setup();
     Object.defineProperty(window.navigator, "onLine", {
