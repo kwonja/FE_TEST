@@ -36,7 +36,7 @@
 - 일정 캘린더와 테이블 UI 코드는 `features/schedule`에 보존하며 현재 페이지 라우트에는 연결하지 않음
 - `/api/events`: 일정 조회와 생성을 위한 Route Handler
 - `/api/events/[id]`: 일정 수정과 삭제를 위한 Route Handler
-- `/api/analytics/game-click`: 게임 선택 클릭 이벤트 저장 Route Handler
+- `/api/analytics/game-click`: 기본 동작이 취소된 경우를 포함해 게임 선택 클릭 이벤트를 저장하는 Route Handler
 - `/api/analytics/game-feedback`: 게임 별점 피드백 저장 Route Handler
 - 캘린더와 테이블은 동일한 Supabase 데이터를 사용
 
