@@ -2,31 +2,42 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { submitGameFeedback } from "@/features/game-analytics/client/submit-game-feedback";
 
+const { postMock } = vi.hoisted(() => ({
+  postMock: vi.fn(),
+}));
+
+vi.mock("@/shared/api/http-client", () => ({
+  httpClient: {
+    post: postMock,
+  },
+}));
+
+const feedback = {
+  gameId: "ladder",
+  gameName: "사다리 타기",
+  rating: 5 as const,
+  sourcePath: "/games/ladder",
+};
+
 const originalOnlineDescriptor = Object.getOwnPropertyDescriptor(
   window.navigator,
   "onLine",
 );
 
-const setOnlineStatus = (isOnline: boolean) => {
+const setOnlineStatus = (online: boolean) => {
   Object.defineProperty(window.navigator, "onLine", {
     configurable: true,
-    value: isOnline,
+    value: online,
   });
 };
 
 describe("submitGameFeedback", () => {
-  const fetchMock = vi.fn();
-
   beforeEach(() => {
+    postMock.mockReset();
     setOnlineStatus(true);
-    fetchMock.mockResolvedValue({ ok: true });
-    vi.stubGlobal("fetch", fetchMock);
   });
 
   afterEach(() => {
-    vi.unstubAllGlobals();
-    fetchMock.mockReset();
-
     if (originalOnlineDescriptor) {
       Object.defineProperty(
         window.navigator,
@@ -39,16 +50,29 @@ describe("submitGameFeedback", () => {
     Reflect.deleteProperty(window.navigator, "onLine");
   });
 
-  it("오프라인에서는 게임 평가 API를 호출하지 않는다", async () => {
+  it("게임 평가를 공통 HTTP 클라이언트로 전송한다", async () => {
+    postMock.mockResolvedValue({ data: {} });
+
+    await submitGameFeedback(feedback);
+
+    expect(postMock).toHaveBeenCalledWith(
+      "/analytics/game-feedback",
+      feedback,
+    );
+  });
+
+  it("오프라인이면 HTTP 요청 없이 평가 전송을 생략한다", async () => {
     setOnlineStatus(false);
 
-    await submitGameFeedback({
-      gameId: "ladder",
-      gameName: "사다리 타기",
-      rating: 5,
-      sourcePath: "/games/ladder",
-    });
+    await expect(submitGameFeedback(feedback)).resolves.toBeUndefined();
+    expect(postMock).not.toHaveBeenCalled();
+  });
 
-    expect(fetchMock).not.toHaveBeenCalled();
+  it("HTTP 요청 실패는 기존 기능 오류 메시지로 변환한다", async () => {
+    postMock.mockRejectedValue(new Error("Request failed with status 500"));
+
+    await expect(submitGameFeedback(feedback)).rejects.toThrow(
+      "게임 평가 저장에 실패했습니다.",
+    );
   });
 });

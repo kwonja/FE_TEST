@@ -4,6 +4,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { GameClickTrackingArea } from "@/features/game-analytics/client/game-click-tracking-area";
 
+const { httpPostMock } = vi.hoisted(() => ({
+  httpPostMock: vi.fn(),
+}));
+
+vi.mock("@/shared/api/http-client", () => ({
+  httpClient: {
+    post: httpPostMock,
+  },
+}));
+
 const originalSendBeaconDescriptor = Object.getOwnPropertyDescriptor(
   window.navigator,
   "sendBeacon",
@@ -42,6 +52,8 @@ const restoreOnlineStatus = () => {
 
 describe("GameClickTrackingArea", () => {
   beforeEach(() => {
+    httpPostMock.mockReset();
+    sendBeaconMock.mockReturnValue(true);
     window.history.pushState(null, "", "/");
     Object.defineProperty(window.navigator, "sendBeacon", {
       configurable: true,
@@ -163,5 +175,31 @@ describe("GameClickTrackingArea", () => {
     await user.click(screen.getByRole("button", { name: "사다리 타기" }));
 
     expect(sendBeaconMock).not.toHaveBeenCalled();
+    expect(httpPostMock).not.toHaveBeenCalled();
+  });
+
+  it("sendBeacon 실패 시 Axios 요청 실패를 조용히 생략한다", async () => {
+    const user = userEvent.setup();
+    sendBeaconMock.mockReturnValue(false);
+    httpPostMock.mockRejectedValue(new Error("Network Error"));
+
+    render(
+      <GameClickTrackingArea>
+        <button type="button" data-game-id="ladder" data-game-name="사다리">
+          사다리 타기
+        </button>
+      </GameClickTrackingArea>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "사다리 타기" }));
+
+    expect(httpPostMock).toHaveBeenCalledWith(
+      "/analytics/game-click",
+      expect.any(String),
+      expect.objectContaining({
+        adapter: "fetch",
+        fetchOptions: { keepalive: true },
+      }),
+    );
   });
 });
