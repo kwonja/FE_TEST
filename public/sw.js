@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "hanpan-offline";
-const CACHE_NAME = `${CACHE_PREFIX}-v1`;
+const CACHE_NAME = `${CACHE_PREFIX}-v2`;
 const OFFLINE_FALLBACK_URL = "/offline";
 const APP_SHELL_URLS = [
   "/",
@@ -7,6 +7,7 @@ const APP_SHELL_URLS = [
   "/games/random-draw",
   "/games/reaction-speed",
   "/games/seven-seven-timer",
+  "/games/initial-consonant",
   OFFLINE_FALLBACK_URL,
 ];
 
