@@ -4,6 +4,7 @@ import {
   Clock3,
   Dices,
   Grid3X3,
+  MessageCircleQuestion,
   Route,
   Sparkles,
   Ticket,
@@ -50,6 +51,13 @@ const quickStartGames = [
     icon: Clock3,
     href: "/games/seven-seven-timer",
     color: "bg-game-sky",
+  },
+  {
+    id: "initial-consonant",
+    title: "초성게임",
+    icon: MessageCircleQuestion,
+    href: "/games/initial-consonant",
+    color: "bg-game-acid",
   },
   {
     id: "team-maker",
@@ -172,6 +180,21 @@ const SevenSevenTimerPreview = () => {
   );
 };
 
+const InitialConsonantPreview = () => {
+  return (
+    <div className="grid h-full min-h-64 place-items-center bg-game-coral p-5 sm:min-h-72 sm:p-8">
+      <div className="relative grid min-h-40 min-w-52 place-items-center rounded-md border-[6px] border-game-ink bg-game-acid px-6 text-center shadow-[5px_5px_0_white] sm:min-h-48 sm:min-w-64 sm:shadow-[8px_8px_0_white]">
+        <span className="absolute top-3 left-3 font-mono text-xs font-black">
+          5 SEC
+        </span>
+        <span className="text-7xl font-black tracking-[0.08em] sm:text-8xl">
+          ㅁ ㅍ
+        </span>
+      </div>
+    </div>
+  );
+};
+
 export const GameHub = () => {
   return (
     <main className="min-h-screen bg-game-paper text-game-ink">
@@ -273,7 +296,7 @@ export const GameHub = () => {
             </h1>
           </div>
           <div className="flex items-end gap-3 border-l-2 border-white/70 pl-5">
-            <strong className="font-mono text-5xl leading-none">04</strong>
+            <strong className="font-mono text-5xl leading-none">05</strong>
             <span className="pb-1 text-xs font-black leading-4">
               PLAYABLE
               <br />
@@ -399,6 +422,33 @@ export const GameHub = () => {
               <p className="mt-3 max-w-sm leading-7 text-muted-foreground">
                 시작한 뒤 정확히 3.33초에 멈춰 보세요. 숫자가 state로 갱신되는
                 타이머 게임입니다.
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          href="/games/initial-consonant"
+          data-game-id="initial-consonant"
+          data-game-name="초성게임"
+          className="group mt-10 grid overflow-hidden rounded-md border-2 border-game-ink bg-white shadow-[5px_5px_0_var(--game-ink)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary sm:shadow-[8px_8px_0_var(--game-ink)] lg:grid-cols-[1.25fr_0.75fr]"
+        >
+          <div className="aspect-[16/10] min-h-0 overflow-hidden border-b-2 border-game-ink lg:border-r-2 lg:border-b-0">
+            <InitialConsonantPreview />
+          </div>
+          <div className="flex min-h-64 flex-col justify-between bg-white p-5 sm:p-8">
+            <div className="flex items-start justify-between">
+              <span className="font-mono text-sm font-black">GAME 005</span>
+              <span className="grid size-11 place-items-center rounded-md border-2 border-game-ink bg-game-acid transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">
+                <ArrowUpRight className="size-6" aria-hidden="true" />
+              </span>
+            </div>
+            <div>
+              <Badge className="mb-4 bg-game-coral text-white">5초 승부</Badge>
+              <h3 className="text-4xl font-black">초성게임</h3>
+              <p className="mt-3 max-w-sm leading-7 text-muted-foreground">
+                두 자리 초성에 맞는 단어를 입력하세요. 정답을 맞힐 때마다
+                점수가 오르고 5초 타이머가 다시 시작됩니다.
               </p>
             </div>
           </div>
