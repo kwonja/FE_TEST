@@ -26,7 +26,9 @@
 - 조기 입력 실격, 키보드 입력, 최근 기록 5개 표시를 지원
 - `/games/seven-seven-timer`: `3.33초`에 최대한 가깝게 멈추는 스톱워치 게임
 - 경과 초를 React state로 0.01초 단위 갱신하고, `performance.now()` 기준의 실제 시간 차이로 결과 오차를 계산
-- 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도, 3.33 맞추기 게임은 최소 370px 너비부터 반응형 UI를 지원
+- `/games/initial-consonant`: 두 자리 초성에 맞는 두 글자 단어를 5초 안에 입력하는 초성게임
+- 정답을 맞히면 점수가 1점 오르고 다음 문제와 5초 progress bar 타이머가 시작되며, 시간이 끝나면 게임오버 창에서 최종 점수를 확인하고 다시 시작할 수 있음
+- 게임 허브, 사다리 타기, 랜덤 뽑기, 반응속도, 3.33 맞추기, 초성게임은 최소 370px 너비부터 반응형 UI를 지원
 - 프로덕션 서비스 워커가 게임 허브·게임 화면·`/offline` 폴백을 미리 캐시하고, 같은 출처의 화면과 정적 리소스를 런타임에 캐시해 오프라인 실행 지원
 - 오프라인에서는 상태 배너를 표시하며, 캐시되지 않은 화면으로 이동하면 `/offline` 안내 화면을 제공
 - Axios 공통 `httpClient`는 API 기본 경로와 타임아웃만 관리하고, `shared/api/network`의 `isOnline`·`assertOnline`으로 기능별 오프라인 정책을 명시
@@ -71,6 +73,7 @@ app/                         # App Router 라우팅, 레이아웃, API 진입점
 │  └─ events/                # 일정 조회·생성·수정·삭제 API
 ├─ games/
 │  ├─ ladder/                # 사다리 타기 페이지
+│  ├─ initial-consonant/     # 두 글자 초성게임 페이지
 │  ├─ random-draw/           # 랜덤 뽑기 페이지와 클라이언트 조합 컴포넌트
 │  ├─ reaction-speed/        # 반응속도 게임 페이지
 │  └─ seven-seven-timer/     # 3.33 맞추기 게임 페이지
@@ -90,6 +93,10 @@ features/
 │  ├─ components/            # 게임 설정과 SVG 사다리 보드
 │  ├─ model/                 # 사다리 타입과 인원 제한
 │  └─ utils/                 # 사다리 생성과 경로 계산
+├─ initial-consonant-game/
+│  ├─ components/            # 초성 문제, 입력, 점수, progress bar와 게임오버 UI
+│  ├─ model/                 # 두 글자 문제 목록, 5초 제한과 게임 진행 상태
+│  └─ utils/                 # 정답 판정과 다음 문제 선택
 ├─ random-draw/
 │  ├─ components/            # 랜덤 뽑기 화면과 셔플·결과 연출
 │  ├─ model/                 # 숫자 범위, 최근 결과 제한, 진행 상태
