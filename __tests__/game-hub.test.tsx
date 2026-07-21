@@ -37,6 +37,7 @@ describe("GameHub", () => {
     expect(screen.getByText("GAME 002")).toBeInTheDocument();
     expect(screen.getByText("GAME 003")).toBeInTheDocument();
     expect(screen.getByText("GAME 005")).toBeInTheDocument();
+    expect(screen.getByText("ㅁ ㅍ")).toBeInTheDocument();
     expect(screen.getByText("05")).toBeInTheDocument();
   });
 });

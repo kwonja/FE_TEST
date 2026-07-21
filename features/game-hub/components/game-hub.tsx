@@ -188,7 +188,7 @@ const InitialConsonantPreview = () => {
           5 SEC
         </span>
         <span className="text-7xl font-black tracking-[0.08em] sm:text-8xl">
-          ㄱㅅ
+          ㅁ ㅍ
         </span>
       </div>
     </div>
